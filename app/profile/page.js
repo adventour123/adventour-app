@@ -69,7 +69,10 @@ const ProfileScreen = () => {
 
       <div className="py-10">
         <ul>
-          <li className="flex space-x-2 items-center p-2">
+          <li
+            onClick={() => router.push("/booking_history")}
+            className="flex space-x-2 items-center p-2"
+          >
             <span>
               <TbNotes size={25} color="#333" />
             </span>

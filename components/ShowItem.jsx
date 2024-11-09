@@ -96,7 +96,10 @@ const ShowItem = (props) => {
         </div>
       </div>
 
-      <BookFooter navigate={() => router.push(`/booking/${props.data.id}`)} />
+      <BookFooter
+        priceRange={props.data?.priceRange}
+        navigate={() => router.push(`/booking/${props.data.id}`)}
+      />
     </div>
   );
 };
@@ -106,7 +109,7 @@ const BookFooter = (props) => {
     <div className="w-full flex justify-between items-center fixed bottom-0 left-0 bg-white border-t border-neutral-100 p-3 rounded-t-3xl">
       <b className="text-2xl font-bold flex items-center">
         <FaPesoSign />
-        2,500
+        {props.priceRange}
       </b>
 
       <div onClick={props.navigate} className="min-w-40">

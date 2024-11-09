@@ -1,4 +1,6 @@
 export const TOURIST_SPOTS_API = `https://api.fruitask.com/v3/tables/iWvImu3KdJD55vp/rows/?api_key=02f69d5cf6e98212a8933e7af958e129`;
+export const NOTIFICATION_API = `https://api.fruitask.com/v3/tables/LVvDMZ8Q811R9rW/rows/?api_key=02f69d5cf6e98212a8933e7af958e129`;
+
 export const CATEGORIES_API =
   "https://api.fruitask.com/v3/tables/doIAJ4RCypOFrIO/rows/?api_key=02f69d5cf6e98212a8933e7af958e129";
 export const BOOKING_API =

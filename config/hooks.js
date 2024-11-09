@@ -1,7 +1,9 @@
 import axios from "axios";
 import {
+  BOOKING_API,
   CATEGORIES_API,
   GET_USER_API,
+  NOTIFICATION_API,
   TOURIST_SPOTS_API,
   UPDATE_USER_API,
   USER_API,
@@ -125,9 +127,37 @@ export const fetchAllTouristSpots = async () => {
   }
 };
 
-export const addBooking = async () => {
+export const addBooking = async (formdata) => {
   try {
-    const res = await axios.post(BOOKING_API);
+    const res = await axios.post(BOOKING_API, formdata);
+    const data = res.data;
+
+    return {
+      success: data.success,
+      data: data.result,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchUserBookings = async () => {
+  try {
+    const res = await axios.get(BOOKING_API);
+    const data = res.data;
+
+    return {
+      success: data.success,
+      data: data.result,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const setNotification = async (notif) => {
+  try {
+    const res = await axios.post(NOTIFICATION_API, notif);
     const data = res.data;
 
     return {

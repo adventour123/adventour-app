@@ -4,11 +4,14 @@ import { PlaceItem } from "@/app/search/page";
 import gcash from "@/assets/gcash.png";
 import Button from "@/components/Button";
 import Loader from "@/components/Loader";
-import { fetchAllTouristSpots } from "@/config/hooks";
+import { addBooking, fetchAllTouristSpots } from "@/config/hooks";
 import { AuthContext } from "@/context/authContext";
+import { DataContext } from "@/context/dataContext";
+import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import Script from "next/script";
 import { useContext, useEffect, useState } from "react";
 import { FaPesoSign } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
@@ -18,12 +21,15 @@ const BookingScreen = () => {
   const router = useRouter();
 
   // States
+  const { data, setData } = useContext(DataContext);
+
   const [activePaymentScreen, setActivePaymentScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [formData, setFormData] = useState({
-    fullName: "",
+    fullName: data?.user?.username || "",
     age: "",
+    email: data?.user?.email || "",
     contactNumber: "",
     startDate: "",
     endDate: "",
@@ -61,6 +67,8 @@ const BookingScreen = () => {
     userId: user?.uid,
     bookingPrice: selectedItem?.priceRange,
     status: "pending",
+    email: data?.user.email,
+    datetime: moment().format("YYYY-MM-DD HH:mm:ss"),
     ...formData,
   };
 
@@ -80,18 +88,33 @@ const BookingScreen = () => {
   const validateForm = () => {
     const newErrors = {};
 
+    // Full Name validation
+    if (!formData.fullName) {
+      newErrors.fullName = "Full Name is required";
+    }
+
+    // Contact Number validation
     if (!formData.contactNumber) {
       newErrors.contactNumber = "Contact number is required";
     } else if (!/^\d{10,}$/.test(formData.contactNumber)) {
       newErrors.contactNumber = "Please enter a valid contact number";
     }
 
+    // Start Date validation
     if (!formData.startDate) {
       newErrors.startDate = "Start date is required";
     }
 
+    // End Date validation
     if (!formData.endDate) {
       newErrors.endDate = "End date is required";
+    }
+
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
     }
 
     setErrors(newErrors);
@@ -99,14 +122,19 @@ const BookingScreen = () => {
   };
 
   const handleSubmit = async (e) => {
-    setIsSubmitting(true);
     e.preventDefault();
     if (!validateForm()) return;
+    setIsSubmitting(true);
 
     setTimeout(() => {
       setIsSubmitting(false);
       setActivePaymentScreen(true);
     }, 1000);
+
+    setData((prev) => ({
+      ...prev,
+      bookItem: selectedItem,
+    }));
   };
 
   if (isLoading) {
@@ -124,7 +152,7 @@ const BookingScreen = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full h-screen bg-white relative">
       <header className="w-full flex items-center px-4 py-3 bg-white sticky top-0 z-10 border-b">
         <button
           onClick={() => router.back()}
@@ -206,6 +234,27 @@ const BookingScreen = () => {
               </div>
             </div>
 
+            <div className="">
+              <label
+                htmlFor="email"
+                className="text-xs text-neutral-500 block mb-1"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="text"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full text-sm border border-neutral-300 p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+                placeholder="Enter your email"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              )}
+            </div>
+
             <div>
               <label
                 htmlFor="contactNumber"
@@ -253,6 +302,7 @@ const BookingScreen = () => {
                   type="date"
                   value={formData.startDate}
                   onChange={handleInputChange}
+                  placeholder="mm/dd/yyyy"
                   className="w-full text-sm border border-neutral-300 p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 />
                 {errors.startDate && (
@@ -275,6 +325,7 @@ const BookingScreen = () => {
                   type="date"
                   value={formData.endDate}
                   onChange={handleInputChange}
+                  placeholder="mm/dd/yyyy"
                   className="w-full text-sm border border-neutral-300 p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
                 />
                 {errors.endDate && (
@@ -284,23 +335,14 @@ const BookingScreen = () => {
             </div>
           </div>
         </section>
-
-        {/* Submit Button */}
-        <div className="pt-4">
-          <Button
-            disabled={
-              !formData ||
-              !formData.fullName ||
-              !formData.startDate ||
-              !formData.endDate
-            }
-            onPress={handleSubmit}
-            className="w-full"
-          >
-            {isSubmitting ? "Processing..." : "Proceed to payment"}
-          </Button>
-        </div>
       </form>
+
+      {/* Submit Button */}
+      <div className="w-full pt-4  p-4">
+        <Button onPress={handleSubmit} className="w-full">
+          {isSubmitting ? "Processing..." : "Proceed to payment"}
+        </Button>
+      </div>
     </div>
   );
 };
@@ -308,18 +350,35 @@ const BookingScreen = () => {
 const PaymentScreen = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitting] = useState(false);
+  const { data, setData } = useContext(DataContext);
+
   console.log(props.formdata);
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     setIsLoading(true);
-    console.log(props.formdata);
-    setTimeout(() => {
+    try {
+      console.log(props.formdata);
+
+      const res = await addBooking(props.formdata);
+
+      if (res && res.success) {
+        setIsSubmitting(true);
+
+        // set to the notification
+        const title = "Booking";
+        const bookTitle = data?.bookItem;
+        const datetime = "";
+        // NotificationProcess;
+      }
+    } catch (error) {
+      console.error("Error submitting booking:", error);
+    } finally {
       setIsLoading(false);
-      setIsSubmitting(true);
-    }, 3000);
+    }
   };
 
-  if (isSubmitting) {
+  if (isSubmitted) {
     return <PaymentSuccessfull />;
   }
   return (
@@ -391,7 +450,7 @@ const PaymentScreen = (props) => {
       </div>
       <div className="w-full absolute bottom-2 p-4">
         <Button onPress={handleSubmit} bgColor="bg-blue-500">
-          Confirm
+          {isLoading ? "Processing payment..." : "Confirm Payment"}
         </Button>
       </div>
     </div>
@@ -405,10 +464,20 @@ const PaymentSuccessfull = () => {
         <RxCross2 size={30} />
       </Link>
 
-      <iframe
-        className="py-2"
-        src="https://lottie.host/embed/d1e9e39a-06c7-4230-bc3a-1253a14ed858/blnFThLBw7.json"
-      ></iframe>
+      <Script
+        src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
+        type="module"
+        strategy="afterInteractive" // Ensures the script is loaded after the page is interactive
+      />
+
+      <dotlottie-player
+        src="https://lottie.host/d1e9e39a-06c7-4230-bc3a-1253a14ed858/blnFThLBw7.json"
+        background="transparent"
+        speed="1"
+        style={{ width: "200px", height: "200px" }}
+        loop
+        autoplay
+      ></dotlottie-player>
       <p className="text-lg font-semibold">Payment Confirmed!</p>
       <p className="text-sm text-center py-2">
         Thank you for your payment. Your booking is now confirmed, and we’re

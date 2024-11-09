@@ -12,7 +12,8 @@ module.exports = {
         screen: "100dvh",
       },
       backgroundImage: {
-        viewpage: "url('https://wallpaperaccess.com/full/377416.jpg')",
+        viewpage:
+          "url('https://i.pinimg.com/1200x/7c/2c/ff/7c2cff6bf945f072ea09616a4e191f18.jpg')",
       },
     },
   },
