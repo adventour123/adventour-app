@@ -59,7 +59,7 @@ const BookingScreen = () => {
     bookId: new Date().getTime().toString(),
     travelId: id,
     userId: user?.uid,
-    bookingPrice: selectedItem.priceRange,
+    bookingPrice: selectedItem?.priceRange,
     status: "pending",
     ...formData,
   };
@@ -106,7 +106,7 @@ const BookingScreen = () => {
     setTimeout(() => {
       setIsSubmitting(false);
       setActivePaymentScreen(true);
-    }, 2000);
+    }, 1000);
   };
 
   if (isLoading) {
