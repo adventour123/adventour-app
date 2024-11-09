@@ -12,7 +12,7 @@ import { useContext, useState } from "react";
 import { GoBell } from "react-icons/go";
 import { LuPencilLine } from "react-icons/lu";
 import { RiSettings2Line } from "react-icons/ri";
-import { TbLogout2 } from "react-icons/tb";
+import { TbLogout2, TbNotes } from "react-icons/tb";
 
 const ProfileScreen = () => {
   const { data, setData } = useContext(DataContext);
@@ -53,7 +53,7 @@ const ProfileScreen = () => {
           className="w-full h-40 bg-green-500 rounded-b-3xl absolute top-0 left-0"
         ></div>
 
-        <div className="relative">
+        <div className="z-50">
           <Profile photoUrl={data?.user?.photoUrl} size={150} />
         </div>
 
@@ -69,6 +69,12 @@ const ProfileScreen = () => {
 
       <div className="py-10">
         <ul>
+          <li className="flex space-x-2 items-center p-2">
+            <span>
+              <TbNotes size={25} color="#333" />
+            </span>
+            <p className="text-lg">Booking History</p>
+          </li>
           <li className="flex space-x-2 items-center p-2">
             <span>
               <LuPencilLine size={25} color="#333" />

@@ -81,6 +81,23 @@ export const isUserExist = async (uid) => {
   }
 };
 
+export const insertImgUrl = async (imgUrl, id) => {
+  try {
+    const img = {
+      column_name: "photoUrl",
+      value: imgUrl,
+    };
+    const res = await updateUser(img, id);
+
+    return {
+      success: res.data.success,
+      message: "Profile uploaded",
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const fetchAllUser = async () => {
   try {
     const res = await axios.get(USER_API);

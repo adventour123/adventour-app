@@ -4,7 +4,7 @@ import { fetchAllCategories } from "@/config/hooks";
 import { DataContext } from "@/context/dataContext";
 import { useContext, useEffect, useState } from "react";
 
-const Categories = () => {
+const Categories = (props) => {
   const { data, setData } = useContext(DataContext);
   const [categories, setCategories] = useState([]);
 
@@ -40,13 +40,8 @@ const Categories = () => {
     }));
     setCategories(updatedCategories);
 
-    // Filter data based on the selected category
-    const selectedCategory = updatedCategories.find((item) => item.id === id);
-
-    setData((prevData) => ({
-      ...prevData,
-      category: selectedCategory.category,
-    }));
+    const item = updatedCategories.find((item) => item.active);
+    props.filter(item.category);
   };
   return (
     <div className="w-full py-2">

@@ -4,7 +4,7 @@ import { fetchAllTouristSpots } from "@/config/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const PopularSlides = () => {
+const PopularSlides = ({ setSelectedItem }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [locations, setLocations] = useState([]);
@@ -29,6 +29,17 @@ const PopularSlides = () => {
     fetchTouristSpots();
   }, []);
 
+  const handleSelectItem = (id) => {
+    if (!id) return;
+
+    const selectedItem = locations?.find((item) => item.id === id);
+    console.log(selectedItem);
+    setSelectedItem({
+      data: selectedItem,
+      active: true,
+    });
+  };
+
   return (
     <div className="w-full py-2">
       <b className="text-sm font-bold">Popular locations</b>
@@ -37,7 +48,7 @@ const PopularSlides = () => {
         {locations?.map((item) => {
           return (
             <PopularItem
-              onClick={() => router.push(`/item/${item.id}`)}
+              onClick={() => handleSelectItem(item.id)}
               key={item.id}
               {...item}
             />

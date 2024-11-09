@@ -1,59 +1,30 @@
-import { fetchAllTouristSpots } from "@/config/hooks";
 import { DataContext } from "@/context/dataContext";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { GoBookmark, GoBookmarkFill } from "react-icons/go";
 import Ratings from "./Ratings";
-const TopPlaces = () => {
+const TopPlaces = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { data } = useContext(DataContext);
 
-  const [locations, setLocations] = useState();
+  const handleSelectItem = (id) => {
+    if (!id) return;
 
-  // filtered by category
-  useEffect(() => {
-    if (!data?.category) return;
-
-    const filterItemData = () => {
-      if (data?.category !== "All") {
-        const filteredData = locations?.filter((item) =>
-          item.categories.toLowerCase().includes(data?.category.toLowerCase())
-        );
-        setLocations(filteredData);
-      }
-
-      setLocations(locations);
-    };
-
-    filterItemData();
-  }, [locations, data?.category]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const fetchTouristSpots = async () => {
-      try {
-        const res = await fetchAllTouristSpots();
-
-        if (res.success) {
-          setLocations(res.data);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchTouristSpots();
-  }, []);
+    const selectedItem = props.data?.find((item) => item.id === id);
+    props.setSelectedItem({
+      data: selectedItem,
+      active: true,
+    });
+  };
 
   return (
-    <div className="w-full py-2">
+    <div className="w-full py-2 relative">
       <div className="flex flex-wrap space-y-2">
-        {locations?.map((item) => {
+        {props.data?.map((item) => {
           return (
             <PlaceItem
-              onClick={() => router.push(`/item/${item.id}`)}
+              onClick={() => handleSelectItem(item.id)}
               key={item.id}
               {...item}
             />
@@ -68,9 +39,9 @@ const PlaceItem = (props) => {
   return (
     <div
       onClick={props.onClick}
-      className="w-full min-h-40 rounded-lg relative overflow-hidden
+      className={`w-full h-44 bg-white rounded-lg relative overflow-hidden
       border border-neutral-300 p-2 bg-contain bg-center bg-no-repeat
-    "
+    `}
       style={{
         background: `url(${props.imgUrl})`,
         backgroundPosition: "center",
