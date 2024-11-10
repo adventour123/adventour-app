@@ -92,6 +92,7 @@ const HomeScreen = () => {
   }
 
   if (selectedItem.active) {
+    console.log(selectedItem.data.id);
     return (
       <ShowItem
         data={selectedItem.data}

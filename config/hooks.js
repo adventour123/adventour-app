@@ -1,9 +1,11 @@
 import axios from "axios";
+import moment from "moment";
 import {
   BOOKING_API,
   CATEGORIES_API,
   GET_USER_API,
   NOTIFICATION_API,
+  REVIEWS_API,
   TOURIST_SPOTS_API,
   UPDATE_USER_API,
   USER_API,
@@ -172,6 +174,45 @@ export const setNotification = async (notif) => {
 export const fetchAllCategories = async () => {
   try {
     const res = await axios.get(CATEGORIES_API);
+    const data = res.data;
+
+    return {
+      success: data.success,
+      data: data.result,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const insertReview = async (data) => {
+  try {
+    const review = {
+      id: new Date().getTime().toString(),
+      travelId: data.travelId,
+      userId: data.userId,
+      name: data.name,
+      message: data.message,
+      ratings: data.ratings,
+      datetime: moment().format("YYYY-MM-DD HH:mm:ss"),
+    };
+
+    const res = await axios.post(REVIEWS_API, review);
+
+    if (res.data?.success) {
+      return {
+        status: "success",
+        message: res.data?.result,
+      };
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchAllReviews = async () => {
+  try {
+    const res = await axios.get(REVIEWS_API);
     const data = res.data;
 
     return {

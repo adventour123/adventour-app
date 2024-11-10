@@ -24,8 +24,8 @@ const SocialAuth = ({ setLoading }) => {
     try {
       const res = account.createOAuth2Session(
         "google",
-        "https://adventour-app-self.vercel.app/home",
-        "https://adventour-app-self.vercel.app/login",
+        "https://cloud.appwrite.io/home",
+        "https://cloud.appwrite.io/login",
         ["email", "public_profile"]
       );
       console.log(res);
@@ -79,8 +79,8 @@ const SocialAuth = ({ setLoading }) => {
     try {
       const res = account.createOAuth2Session(
         "facebook",
-        "https://adventour-app-self.vercel.app/home",
-        "https://adventour-app-self.vercel.app/login"
+        "https://cloud.appwrite.io/home",
+        "https://cloud.appwrite.io/login"
       );
       console.log(res);
 

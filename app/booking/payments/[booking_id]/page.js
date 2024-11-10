@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 import gcash from "../../../../assets/gcash.png";
-import Button from "../../../../components/Button";
+import Button from "../../../components/Button";
 
 const BookingPaymentScreen = () => {
   const router = useRouter();
+  const { booking_id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitting] = useState(false);
 
@@ -47,7 +48,7 @@ const BookingPaymentScreen = () => {
         <div className="p-4">
           <div className="w-full flex justify-between items-center py-1">
             <span className="text-sm text-neutral-500 font-mono">
-              Agency Name
+              Booked Name
             </span>
 
             <b className="text-sm font-mono">Elmundo Travel&Tours</b>

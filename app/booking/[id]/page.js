@@ -67,7 +67,6 @@ const BookingScreen = () => {
     userId: user?.uid,
     bookingPrice: selectedItem?.priceRange,
     status: "pending",
-    email: data?.user.email,
     datetime: moment().format("YYYY-MM-DD HH:mm:ss"),
     ...formData,
   };
@@ -405,10 +404,10 @@ const PaymentScreen = (props) => {
         <div className="p-4">
           <div className="w-full flex justify-between items-center py-1">
             <span className="text-xs text-neutral-500 font-mono">
-              Agency Name
+              Booked Name
             </span>
 
-            <b className="text-xs font-mono">Elmundo Travel&Tours</b>
+            <b className="text-xs font-mono">{props.data.name}</b>
           </div>
           <div className="w-full flex justify-between items-center py-1">
             <span className="text-xs text-neutral-500 font-mono">
@@ -422,17 +421,19 @@ const PaymentScreen = (props) => {
 
           <div className="w-full flex justify-between items-center py-1">
             <span className="text-xs text-neutral-500 font-mono">
-              Destination Name
+              Email Address
             </span>
 
-            <b className="text-xs font-mono">{props.data.name}</b>
+            <b className="text-xs font-mono">{props.formdata.email}</b>
           </div>
           <div className="w-full flex justify-between items-center py-1">
             <span className="text-xs text-neutral-500 font-mono">
               Travel Date
             </span>
 
-            <b className="text-xs font-mono">{props.formdata.scheduleDate}</b>
+            <b className="text-xs font-mono">{`${props.formdata.startDate
+              .split("-")
+              .join("/")} - ${props.formdata.endDate.split("-").join("/")}`}</b>
           </div>
 
           <div className="w-full border-b my-2"></div>
@@ -479,7 +480,7 @@ const PaymentSuccessfull = () => {
         autoplay
       ></dotlottie-player>
       <p className="text-lg font-semibold">Payment Confirmed!</p>
-      <p className="text-sm text-center py-2">
+      <p className="text-sm text-center py-2 px-4">
         Thank you for your payment. Your booking is now confirmed, and we’re
         excited to have you join us!
       </p>

@@ -90,9 +90,8 @@ const ShowItem = (props) => {
         </div>
 
         <div className="py-3">
-          <b className="text-sm">Reviews</b>
-
-          <Reviews />
+          <b className="text-sm">Reviews & Ratings</b>
+          <Reviews travelId={props.data.id} />
         </div>
       </div>
 
