@@ -97,7 +97,7 @@ const BookingHistoryScreen = () => {
           onStatusChange={setSelectedStatus}
         />
 
-        <div className="w-full h-2 border-b border-neutral-500 "></div>
+        <div className="w-full h-2 border-b border-neutral-300 "></div>
         <main className="pt-2 flex flex-col space-y-2 overflow-y-auto h-full">
           <BookingsList
             isLoading={isLoading}

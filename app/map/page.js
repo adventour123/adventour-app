@@ -1,4 +1,4 @@
-import BottomNavbar from "@/components/BottomNavbar";
+import BottomNavbar from "../../components/BottomNavbar";
 
 const MapScreen = () => {
   return (
