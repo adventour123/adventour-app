@@ -13,15 +13,15 @@ const ShowItem = (props) => {
   const router = useRouter();
   const [bookmark, setBookmark] = useState({
     id: 1,
-    booked: props.bookmarked === "true",
+    booked: props.data.bookmarked === "true",
   });
 
   const toggleBookmark = async () => {};
 
   return (
-    <div className="w-full h-full absolute inset-0 bg-white p-4 pb-16">
+    <div className="w-full h-full absolute inset-0 bg-white p-4">
       <div
-        className="w-full min-h-80 rounded-3xl bg-white shadow-md p-4 overflow-hidden"
+        className="w-full min-h-80 rounded-3xl  shadow-md p-4 overflow-hidden"
         style={{
           background: `url('${props.data.imgUrl}')`,
           backgroundPosition: "center",
@@ -30,12 +30,12 @@ const ShowItem = (props) => {
         }}
       >
         <div className="flex justify-between items-center">
-          <span onClick={props.close} className="bg-white/50 rounded-full p-1">
+          <span onClick={props.close} className="/50 rounded-full p-1">
             <IoIosArrowBack size={25} color="#fff" />
           </span>
 
           <span
-            className="bg-white/50 rounded-full p-1"
+            className="/50 rounded-full p-1"
             onClick={() =>
               setBookmark({
                 id: 1,
@@ -43,7 +43,7 @@ const ShowItem = (props) => {
               })
             }
           >
-            {props.data.bookmarked ? (
+            {bookmark.booked ? (
               <IoBookmark size={25} color="#fff" />
             ) : (
               <MdBookmarkBorder size={25} color="#fff" />
@@ -51,7 +51,7 @@ const ShowItem = (props) => {
           </span>
         </div>
       </div>
-      <div className="h-full py-2 px-2">
+      <div className=" py-2 px-2 pb-20 bg-white">
         <div className="w-full flex space-x-4 justify-between items-start">
           <div className="">
             <p className="text-xl font-semibold text-black pt-1">
@@ -105,7 +105,7 @@ const ShowItem = (props) => {
 
 const BookFooter = (props) => {
   return (
-    <div className="w-full flex justify-between items-center fixed bottom-0 left-0 bg-white border-t border-neutral-100 p-3 rounded-t-3xl">
+    <div className="w-full flex justify-between items-center fixed bottom-0 left-0  border-t border-neutral-100 p-3 rounded-t-3xl bg-white">
       <b className="text-2xl font-bold flex items-center">
         <FaPesoSign />
         {props.priceRange}

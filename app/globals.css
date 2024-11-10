@@ -7,6 +7,10 @@
   height: 0;
 }
 
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
 /* From Uiverse.io by barisdogansutcu */
 .loader svg {
   width: 3em;

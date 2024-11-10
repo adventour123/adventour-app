@@ -77,7 +77,7 @@ const Reviews = (props) => {
 
         return {
           ...review,
-          name: user?.name,
+          name: user?.username,
           photoUrl: user?.photoUrl,
           ratings: review.ratings, // Include ratings from review
         };
@@ -122,23 +122,28 @@ const Reviews = (props) => {
   };
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const checkIfUserHasBooking = async () => {
+      if (!props.travelId || !data?.user?.uid) return; // Early return if travelId or user ID is missing
+
       try {
         const res = await fetchUserBookings();
         if (res.success) {
-          const filteredData = res.data.find(
-            (item) => item.travelId === props.travelId
+          const userBooking = res.data.find(
+            (item) =>
+              item.travelId === props.travelId && item.userId === data.user.uid
           );
-          const isAlreadyBooked = filteredData.status === "completed";
-          console.log("Already booked?: ", isAlreadyBooked);
+
+          const isAlreadyBooked = userBooking?.status === "completed";
+          console.log("Already booked by user?:", isAlreadyBooked);
           setIfBooked(isAlreadyBooked);
         }
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching user bookings:", error);
       }
     };
-    fetchBookings();
-  }, [props.travelId]);
+
+    checkIfUserHasBooking();
+  }, [props.travelId, data?.user?.uid]);
 
   return (
     <div className="">
@@ -147,7 +152,9 @@ const Reviews = (props) => {
           {isLoading ? (
             <p className="text-neutral-500">Loading...</p>
           ) : (
-            reviewsData.map((item) => <ReviewItem key={item.id} {...item} />)
+            reviewsData.map((item, index) => (
+              <ReviewItem key={index} {...item} />
+            ))
           )}
         </div>
       )}
@@ -202,16 +209,16 @@ const ReviewItem = (props) => {
       <header className="w-full flex justify-between">
         <div className="flex space-x-2">
           <Image
-            className="w-12 h-12 shrink-0 rounded-full relative overflow-hidden border border-neutral-300 bg-contain bg-center bg-fixed"
+            className="w-10 h-10 shrink-0 rounded-full relative overflow-hidden border border-neutral-300 bg-contain bg-center bg-fixed"
             src={props.photoUrl || defaultProfile} // Fallback image
-            width={80}
+            width={60}
             height={60}
-            alt={props.data?.name}
+            alt={props.name || "hello"}
           />
 
           <div className="flex flex-col">
             <p className="text-base text-black">{props.name}</p>
-            <p className="text-sm text-neutral-500">
+            <p className="text-xs text-neutral-500">
               {moment().fromNow(props.datetime)}
             </p>
           </div>
@@ -222,7 +229,7 @@ const ReviewItem = (props) => {
       </header>
 
       <div className="p-2">
-        <p className="text-base text-neutral-500">{props.message}</p>
+        <p className="text-sm text-neutral-500">{props.message}</p>
       </div>
     </div>
   );

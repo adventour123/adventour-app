@@ -199,7 +199,7 @@ const BookingItem = ({ booking }) => {
         <div className="flex flex-col justify-center">
           <p className="text-base text-gray-900">{spotDetails.name}</p>
           <p className="text-xs text-gray-600">
-            {moment(spotDetails.datetime).fromNow()}
+            {moment().fromNow(spotDetails.datetime)}
           </p>
           <p className={`text-xs ${getStatusColor(status)}`}>
             Status:{" "}
