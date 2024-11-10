@@ -2,9 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { fetchAllTouristSpots } from "../config/hooks";
 
-const PopularSlides = ({ setSelectedItem }) => {
+const PopularSlides = ({ data, setSelectedItem }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [locations, setLocations] = useState([]);
@@ -13,21 +12,17 @@ const PopularSlides = ({ setSelectedItem }) => {
     setIsLoading(true);
     const fetchTouristSpots = async () => {
       try {
-        const res = await fetchAllTouristSpots();
-
-        if (res.success) {
-          const highRatingItem = res.data.filter((item) => item.ratings > 3);
-          console.log(highRatingItem);
-          setLocations(highRatingItem);
-          setIsLoading(false);
-        }
+        const highRatingItem = data?.filter((item) => item.ratings > 3);
+        console.log(highRatingItem);
+        setLocations(highRatingItem);
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchTouristSpots();
-  }, []);
+  }, [data]);
 
   const handleSelectItem = (id) => {
     if (!id) return;

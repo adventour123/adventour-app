@@ -3,12 +3,17 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { IconSearch } from "../../components/Icons";
 import PlaceItem from "../../components/PlaceItem";
+import ShowItem from "../../components/ShowItem";
 import { fetchAllTouristSpots } from "../../config/hooks";
 const SearchScreen = () => {
   const [searchInput, setSearchInput] = useState("");
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [originalItems, setOriginalItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState({
+    active: false,
+    data: null,
+  });
 
   useEffect(() => {
     // fetch tourist spots
@@ -47,6 +52,26 @@ const SearchScreen = () => {
     filteringData();
   }, [searchInput, originalItems]);
 
+  const handleSelectItem = (id) => {
+    if (!id) return;
+
+    const selectedItem = items.find((item) => item.id === id);
+    setSelectedItem({
+      data: selectedItem,
+      active: true,
+    });
+  };
+
+  if (selectedItem.active) {
+    console.log(selectedItem.data.id);
+    return (
+      <ShowItem
+        data={selectedItem.data}
+        close={() => setSelectedItem({ active: false, data: null })}
+      />
+    );
+  }
+
   return (
     <div className="w-full h-full overflow-y-auto bg-white p-4 relative">
       <header className="w-full flex space-x-3 justify-between items-center px-4 py-3 bg-white fixed top-0 left-0 z-50">
@@ -76,7 +101,11 @@ const SearchScreen = () => {
       <div className="mt-10 py-2">
         <div className="flex flex-col space-y-2">
           {items?.map((item) => {
-            return <PlaceItem key={item.id} data={{ ...item }} />;
+            return (
+              <div key={item.id} onClick={() => handleSelectItem(item.id)}>
+                <PlaceItem data={{ ...item }} />
+              </div>
+            );
           })}
 
           {items.length === 0 && <p className="text-center">No item found</p>}

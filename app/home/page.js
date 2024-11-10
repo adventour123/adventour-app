@@ -23,6 +23,7 @@ const HomeScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState({
+    id: 1,
     active: false,
     data: null,
   });
@@ -63,7 +64,11 @@ const HomeScreen = () => {
         const res = await fetchAllTouristSpots();
         if (res.success) {
           setItems(res.data);
-          setOriginalItems(res.data); // Store original data for filtering
+          setOriginalItems(res.data);
+          setData((prevData) => ({
+            ...prevData,
+            touristSpots: res.data,
+          }));
         }
       } catch (error) {
         console.error("Error fetching tourist spots:", error);
@@ -73,7 +78,7 @@ const HomeScreen = () => {
     };
 
     fetchTouristSpots();
-  }, []);
+  }, [setData]);
 
   const filterData = (category) => {
     if (!category || category === "All") {
@@ -95,6 +100,7 @@ const HomeScreen = () => {
     console.log(selectedItem.data.id);
     return (
       <ShowItem
+        index={selectedItem.id}
         data={selectedItem.data}
         close={() => setSelectedItem({ active: false, data: null })}
       />

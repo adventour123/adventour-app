@@ -4,7 +4,10 @@ import Ratings from "./Ratings";
 
 const PlaceItem = (props) => {
   return (
-    <div className="w-full flex space-x-2 rounded-lg shadow-sm p-2 border border-neutral-100">
+    <div
+      onClick={props.onPress}
+      className="w-full flex space-x-2 rounded-lg shadow-sm p-2 border border-neutral-100"
+    >
       <Image
         className="w-20 h-16 rounded-lg object-cover"
         src={props.data?.imgUrl || "/fallback-image.jpg"} // Fallback image
@@ -13,7 +16,7 @@ const PlaceItem = (props) => {
         alt={props.data?.name || "Place image"}
       />
 
-      <div className="py-2">
+      <div className="">
         <p className="text-base text-black">{props.data?.name}</p>
         <div className="flex space-x-1 items-center">
           <span>

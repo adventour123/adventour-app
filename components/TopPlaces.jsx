@@ -8,11 +8,14 @@ const TopPlaces = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { data } = useContext(DataContext);
 
-  const handleSelectItem = (id) => {
+  const handleSelectItem = (id, index) => {
     if (!id) return;
+    console.log("Index: ", index + 1);
+    console.log("ID: ", id);
 
     const selectedItem = props.data?.find((item) => item.id === id);
     props.setSelectedItem({
+      id: index + 1,
       data: selectedItem,
       active: true,
     });
@@ -21,10 +24,10 @@ const TopPlaces = (props) => {
   return (
     <div className="w-full py-2 relative">
       <div className="flex flex-wrap space-y-2">
-        {props.data?.map((item) => {
+        {props.data?.map((item, index) => {
           return (
             <PlaceItem
-              onClick={() => handleSelectItem(item.id)}
+              onClick={() => handleSelectItem(item.id, index)}
               key={item.id}
               {...item}
             />

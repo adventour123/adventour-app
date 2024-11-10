@@ -1,22 +1,46 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FaPesoSign } from "react-icons/fa6";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoBookmark } from "react-icons/io5";
 import { MdBookmarkBorder } from "react-icons/md";
+import { toggleBookmarking } from "../config/hooks";
+import { DataContext } from "../context/dataContext";
 import Button from "./Button";
 import Ratings from "./Ratings";
 import Reviews from "./Reviews";
 
 const ShowItem = (props) => {
   const router = useRouter();
+  const { data } = useContext(DataContext);
   const [bookmark, setBookmark] = useState({
     id: 1,
     booked: props.data.bookmarked === "true",
   });
 
-  const toggleBookmark = async () => {};
+  const toggleBookmark = async (id) => {
+    try {
+      console.log("Item index: ", id);
+
+      // Toggle the bookmarked state as a string ("true" or "false")
+      const newBookmarkStatus = bookmark.booked === "true" ? "false" : "true";
+
+      // Update local bookmark state
+      setBookmark({
+        id: id,
+        booked: newBookmarkStatus,
+      });
+
+      // Update in the database
+      const res = await toggleBookmarking(id, newBookmarkStatus);
+      if (res.success) {
+        console.log("Item bookmark status updated successfully.");
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+    }
+  };
 
   return (
     <div className="w-full h-full absolute inset-0 bg-white p-4">
@@ -36,12 +60,7 @@ const ShowItem = (props) => {
 
           <span
             className="/50 rounded-full p-1"
-            onClick={() =>
-              setBookmark({
-                id: 1,
-                booked: !bookmark.booked,
-              })
-            }
+            onClick={() => toggleBookmark(props.index)}
           >
             {bookmark.booked ? (
               <IoBookmark size={25} color="#fff" />

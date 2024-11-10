@@ -26,7 +26,7 @@ export const GET_USER_API = (id) => {
 };
 
 export const UPDATE_USER_API = (id) => {
-  return `https://api.fruitask.com/v3/tables/jOa8w743BhrS0qI/update/${id}/?api_key=02f69d5cf6e98212a8933e7af958e129`;
+  return `/jOa8w743BhrS0qI/update/${id}/?api_key=02f69d5cf6e98212a8933e7af958e129`;
 };
 
 export const GET_BOOKING_API = (id) => {

@@ -7,9 +7,11 @@ import {
   NOTIFICATION_API,
   REVIEWS_API,
   TOURIST_SPOTS_API,
+  UPDATE_TOURIST_SPOT_API,
   UPDATE_USER_API,
   USER_API,
 } from "./API";
+import api from "./axios";
 
 export const createAccount = async (data) => {
   try {
@@ -213,6 +215,25 @@ export const insertReview = async (data) => {
 export const fetchAllReviews = async () => {
   try {
     const res = await axios.get(REVIEWS_API);
+    const data = res.data;
+
+    return {
+      success: data.success,
+      data: data.result,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const toggleBookmarking = async (id, bookmark) => {
+  try {
+    const bookmarked = {
+      column_name: "bookmarked",
+      value: bookmark,
+    };
+
+    const res = await api.put(UPDATE_TOURIST_SPOT_API(id), bookmarked);
     const data = res.data;
 
     return {
