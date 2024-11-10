@@ -1,19 +1,19 @@
 "use client";
 
-import Button from "@/components/Button";
-import { AppIcon } from "@/components/Icons";
-import Loader from "@/components/Loader";
-import SocialAuth from "@/components/SocialAuth";
-import { auth } from "@/config/firebase_config";
-import { ToastifyError, ToastifySuccess } from "@/config/functions";
-import { createAccount } from "@/config/hooks";
-import { AuthContext } from "@/context/authContext";
-import { DataContext } from "@/context/dataContext";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
 import { useContext, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer } from "react-toastify";
+import Button from "../../components/Button";
+import { AppIcon } from "../../components/Icons";
+import Loader from "../../components/Loader";
+import SocialAuth from "../../components/SocialAuth";
+import { auth } from "../../config/firebase_config";
+import { ToastifyError, ToastifySuccess } from "../../config/functions";
+import { createAccount } from "../../config/hooks";
+import { AuthContext } from "../../context/authContext";
+import { DataContext } from "../../context/dataContext";
 
 const SignupScreen = () => {
   const [username, setUsername] = useState("");
@@ -130,7 +130,7 @@ const SignupScreen = () => {
         <p className="pb-4 text-sm text-neutral-600">Create your Account</p>
 
         <div className="w-full flex flex-col space-y-4">
-          <div className="border border-neutral-300 rounded-3xl p-2 px-3">
+          <div className="border border-neutral-300 rounded-xl p-2 px-3">
             <input
               className="w-full focus:outline-none"
               type="text"
@@ -142,7 +142,7 @@ const SignupScreen = () => {
             />
           </div>
 
-          <div className="border border-neutral-300 rounded-3xl p-2 px-3">
+          <div className="border border-neutral-300 rounded-xl p-2 px-3">
             <input
               className="w-full focus:outline-none"
               type="email"
@@ -155,7 +155,7 @@ const SignupScreen = () => {
           </div>
 
           <div
-            className="border border-neutral-300 rounded-3xl p-2 px-3
+            className="border border-neutral-300 rounded-xl p-2 px-3
           flex items-center"
           >
             <input
@@ -178,7 +178,7 @@ const SignupScreen = () => {
           </div>
 
           <div
-            className="border border-neutral-300 rounded-3xl p-2 px-3
+            className="border border-neutral-300 rounded-xl p-2 px-3
           flex items-center"
           >
             <input

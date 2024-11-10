@@ -1,8 +1,8 @@
 "use client";
 
-import { fetchAllCategories } from "@/config/hooks";
-import { DataContext } from "@/context/dataContext";
 import { useContext, useEffect, useState } from "react";
+import { fetchAllCategories } from "../config/hooks";
+import { DataContext } from "../context/dataContext";
 
 const Categories = (props) => {
   const { data, setData } = useContext(DataContext);

@@ -1,9 +1,9 @@
 "use client";
-import BottomNavbar from "@/components/BottomNavbar";
-import ShowItem from "@/components/ShowItem";
-import TopPlaces from "@/components/TopPlaces";
-import { fetchAllTouristSpots } from "@/config/hooks";
 import { useEffect, useState } from "react";
+import BottomNavbar from "../../components/BottomNavbar";
+import ShowItem from "../../components/ShowItem";
+import TopPlaces from "../../components/TopPlaces";
+import { fetchAllTouristSpots } from "../../config/hooks";
 
 const BookmarkScreen = () => {
   const [items, setItems] = useState([]);

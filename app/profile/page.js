@@ -1,11 +1,5 @@
 "use client";
 
-import BottomNavbar from "@/components/BottomNavbar";
-import Loader from "@/components/Loader";
-import Profile from "@/components/Profile";
-import { auth } from "@/config/firebase_config";
-import { updateUser } from "@/config/hooks";
-import { DataContext } from "@/context/dataContext";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
@@ -13,6 +7,13 @@ import { GoBell } from "react-icons/go";
 import { LuPencilLine } from "react-icons/lu";
 import { RiSettings2Line } from "react-icons/ri";
 import { TbLogout2, TbNotes } from "react-icons/tb";
+import BottomNavbar from "../../components/BottomNavbar";
+import Loader from "../../components/Loader";
+import Profile from "../../components/Profile";
+import { account } from "../../config/appwrite";
+import { auth } from "../../config/firebase_config";
+import { updateUser } from "../../config/hooks";
+import { DataContext } from "../../context/dataContext";
 
 const ProfileScreen = () => {
   const { data, setData } = useContext(DataContext);
@@ -32,6 +33,7 @@ const ProfileScreen = () => {
 
       await updateUser(newData, data?.userId);
       await signOut(auth);
+      await account.deleteSession("current");
       router.push("/");
 
       setIsLoading(false);
@@ -76,7 +78,7 @@ const ProfileScreen = () => {
             <span>
               <TbNotes size={25} color="#333" />
             </span>
-            <p className="text-lg">Booking History</p>
+            <p className="text-lg">Bookings</p>
           </li>
           <li className="flex space-x-2 items-center p-2">
             <span>

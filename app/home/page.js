@@ -4,17 +4,17 @@ import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { GoBellFill } from "react-icons/go";
 
-import BottomNavbar from "@/components/BottomNavbar";
-import Categories from "@/components/Categories";
-import { IconSearch } from "@/components/Icons";
-import Loader from "@/components/Loader";
-import PopularSlides from "@/components/PopularSlides";
-import Profile from "@/components/Profile";
-import ShowItem from "@/components/ShowItem";
-import TopPlaces from "@/components/TopPlaces";
-import { fetchAllTouristSpots, fetchAllUser } from "@/config/hooks";
-import { AuthContext } from "@/context/authContext";
-import { DataContext } from "@/context/dataContext";
+import BottomNavbar from "../../components/BottomNavbar";
+import Categories from "../../components/Categories";
+import { IconSearch } from "../../components/Icons";
+import Loader from "../../components/Loader";
+import PopularSlides from "../../components/PopularSlides";
+import Profile from "../../components/Profile";
+import ShowItem from "../../components/ShowItem";
+import TopPlaces from "../../components/TopPlaces";
+import { fetchAllTouristSpots, fetchAllUser } from "../../config/hooks";
+import { AuthContext } from "../../context/authContext";
+import { DataContext } from "../../context/dataContext";
 
 const HomeScreen = () => {
   const router = useRouter();

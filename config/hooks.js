@@ -62,10 +62,10 @@ export const updateUser = async (newData, id) => {
   }
 };
 
-export const isUserExist = async (uid) => {
+export const isUserExist = async (email) => {
   try {
     const { users } = await fetchAllUser();
-    const userId = users.findIndex((item) => item.uid === uid);
+    const userId = users.findIndex((item) => item.email === email);
 
     const res = await axios.get(GET_USER_API(userId));
     const data = res.data.result;

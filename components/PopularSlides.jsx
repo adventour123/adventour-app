@@ -1,8 +1,8 @@
 "use client";
 
-import { fetchAllTouristSpots } from "@/config/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { fetchAllTouristSpots } from "../config/hooks";
 
 const PopularSlides = ({ setSelectedItem }) => {
   const router = useRouter();

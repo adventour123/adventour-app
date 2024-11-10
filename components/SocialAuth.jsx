@@ -1,20 +1,17 @@
-import {
-  FacebookAuthProvider,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
+"use client";
 import { useContext, useEffect, useState } from "react";
 
-import { auth } from "@/config/firebase_config";
-import { ToastifySuccess } from "@/config/functions";
-import { createAccount, isUserExist } from "@/config/hooks";
-import { DataContext } from "@/context/dataContext";
+import { account } from "../config/appwrite";
+import { ToastifyError, ToastifySuccess } from "../config/functions";
+import { createAccount, isUserExist } from "../config/hooks";
+import { AuthContext } from "../context/authContext";
+import { DataContext } from "../context/dataContext";
 import { IconFacebook, IconGoogle } from "./Icons";
 
 const SocialAuth = ({ setLoading }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { data, setData } = useContext(DataContext);
-
+  const { setUser } = useContext(AuthContext);
   useEffect(() => {
     if (isLoading) {
       setLoading(isLoading);
@@ -23,103 +20,174 @@ const SocialAuth = ({ setLoading }) => {
 
   const handleGoogleSignin = async () => {
     setIsLoading(true);
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider)
-      .then(async (res) => {
-        console.log("Google auth: ", res.user);
 
-        const result = res.user;
-        const userExist = await isUserExist(result.uid);
-        // check if user is not exist in database
-        // then create the account
-        if (!userExist) {
-          const data = {
-            uid: result.uid,
-            username: result.displayName,
-            email: result.email,
-            photoUrl: result.photoURL,
-          };
-          const response = await createAccount(data);
+    try {
+      const res = account.createOAuth2Session(
+        "google",
+        "https://adventour-app-self.vercel.app/home",
+        "https://adventour-app-self.vercel.app/login",
+        ["email", "public_profile"]
+      );
+      console.log(res);
 
-          if (response?.status) {
-            ToastifySuccess(response.message);
-            setIsLoading(false);
+      const user = await account.get();
+      console.log(user);
+      setUser({
+        uid: user?.$id,
+        accessToken: currentUser?.accessedAt,
+      });
+      const result = user;
+      const userExist = await isUserExist(result.uid);
 
-            setData((prevData) => ({
-              ...prevData,
-              user: data,
-              userId: response?.id,
-            }));
-          }
-        } else {
-          ToastifySuccess("User registered successfully");
-          setIsLoading(false);
+      if (!userExist) {
+        const data = {
+          uid: result.$id,
+          username: result.name,
+          email: result.email,
+          photoUrl: result.prefs?.picture || "",
+        };
+        const response = await createAccount(data);
 
+        if (response?.status) {
+          ToastifySuccess(response.message);
           setData((prevData) => ({
             ...prevData,
             user: data,
+            userId: response?.id,
           }));
         }
-      })
-      .then((error) => {
-        console.log(error);
-      });
+      } else {
+        ToastifySuccess("User registered successfully");
+        setData((prevData) => ({
+          ...prevData,
+          user: result,
+        }));
+      }
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      ToastifyError(
+        "An error occurred during Google sign-in. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleFacebookSignin = async () => {
     setIsLoading(true);
 
-    const provider = new FacebookAuthProvider();
-    await signInWithPopup(auth, provider)
-      .then(async (res) => {
-        console.log("Google auth: ", res.user);
+    try {
+      const res = account.createOAuth2Session(
+        "facebook",
+        "https://adventour-app-self.vercel.app/home",
+        "https://adventour-app-self.vercel.app/login"
+      );
+      console.log(res);
 
-        const result = res.user;
-        const userExist = await isUserExist(result.uid);
-        // check if user is not exist in database
-        // then create the account
-        if (!userExist) {
-          const data = {
-            uid: result.uid,
-            username: result.displayName,
-            email: result.email,
-            photoUrl: result.photoURL,
-          };
-          const response = await createAccount(data);
+      const user = await account.get();
+      console.log(user);
+      setUser({
+        uid: user?.$id,
+        accessToken: currentUser?.accessedAt,
+      });
+      const result = user;
+      const userExist = await isUserExist(result.uid);
 
-          if (response?.status) {
-            ToastifySuccess(response.message);
-            setIsLoading(false);
+      if (!userExist) {
+        const data = {
+          uid: result.$id,
+          username: result.name,
+          email: result.email,
+          photoUrl: result.prefs?.picture || "",
+        };
+        const response = await createAccount(data);
 
-            setData((prevData) => ({
-              ...prevData,
-              user: data,
-              userId: response?.id,
-            }));
-          }
-        } else {
-          ToastifySuccess("User registered successfully");
-          setIsLoading(false);
-
+        if (response?.status) {
+          ToastifySuccess(response.message);
           setData((prevData) => ({
             ...prevData,
             user: data,
+            userId: response?.id,
           }));
         }
-      })
-      .then((error) => {
-        console.log(error);
-      });
+      } else {
+        ToastifySuccess("User registered successfully");
+        setData((prevData) => ({
+          ...prevData,
+          user: result,
+        }));
+      }
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      ToastifyError(
+        "An error occurred during Google sign-in. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  // const handleGoogleSignin = async () => {
+  //   setIsLoading(true);
+  //   const provider = new GoogleAuthProvider();
+  //   await signInWithPopup(auth, provider)
+  //     .then(async (res) => {
+  //       console.log("Google auth: ", res.user);
+
+  //       const result = res.user;
+  //       const userExist = await isUserExist(result.uid);
+  //       // check if user is not exist in database
+  //       // then create the account
+  //       if (!userExist) {
+  //         const data = {
+  //           uid: result.uid,
+  //           username: result.displayName,
+  //           email: result.email,
+  //           photoUrl: result.photoURL,
+  //         };
+  //         const response = await createAccount(data);
+
+  //         if (response?.status) {
+  //           ToastifySuccess(response.message);
+  //           setIsLoading(false);
+
+  //           setData((prevData) => ({
+  //             ...prevData,
+  //             user: data,
+  //             userId: response?.id,
+  //           }));
+  //         }
+  //       } else {
+  //         ToastifySuccess("User registered successfully");
+  //         setIsLoading(false);
+
+  //         setData((prevData) => ({
+  //           ...prevData,
+  //           user: data,
+  //         }));
+  //       }
+  //     })
+  //     .then((error) => {
+  //       console.log(error);
+  //     });
+  // };
+
   return (
-    <div className="flex space-x-6 justify-center items-center">
-      <span onClick={() => handleFacebookSignin()}>
-        <IconFacebook width={40} height={40} />
+    <div className="flex flex-col space-y-2 justify-center items-center">
+      <span
+        className="w-full flex justify-center items-center space-x-4 px-2 py-1 bg-white border border-neutral-200 rounded-md"
+        onClick={() => handleFacebookSignin()}
+      >
+        <IconFacebook width={35} height={35} />
+        <p className="text-base text-neutral-500">Signin with Facebook</p>
       </span>
 
-      <span onClick={() => handleGoogleSignin()}>
-        <IconGoogle width={35} height={35} />
+      <span
+        className="w-full flex justify-center items-center space-x-4 px-2 py-1 bg-white border border-neutral-200 rounded-md"
+        onClick={() => handleGoogleSignin()}
+      >
+        <IconGoogle width={30} height={30} />
+        <p className="text-base text-neutral-500">Signin with Google</p>
       </span>
     </div>
   );

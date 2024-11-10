@@ -1,9 +1,9 @@
 "use client";
 
-import Button from "@/components/Button";
-import Loader from "@/components/Loader";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Button from "../components/Button";
+import Loader from "../components/Loader";
 
 const Home = () => {
   const router = useRouter();

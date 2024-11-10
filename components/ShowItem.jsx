@@ -1,13 +1,13 @@
 "use client";
-import Button from "@/components/Button";
-import Ratings from "@/components/Ratings";
-import Reviews from "@/components/Reviews";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaPesoSign } from "react-icons/fa6";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoBookmark } from "react-icons/io5";
 import { MdBookmarkBorder } from "react-icons/md";
+import Button from "./Button";
+import Ratings from "./Ratings";
+import Reviews from "./Reviews";
 
 const ShowItem = (props) => {
   const router = useRouter();

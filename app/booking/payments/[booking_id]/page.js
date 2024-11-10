@@ -1,11 +1,12 @@
 "use client";
-import gcash from "@/assets/gcash.png";
-import Button from "@/components/Button";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
+import gcash from "../../../../assets/gcash.png";
+import Button from "../../../components/Button";
+
 const BookingPaymentScreen = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);

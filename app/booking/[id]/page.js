@@ -1,12 +1,5 @@
 "use client";
 
-import { PlaceItem } from "@/app/search/page";
-import gcash from "@/assets/gcash.png";
-import Button from "@/components/Button";
-import Loader from "@/components/Loader";
-import { addBooking, fetchAllTouristSpots } from "@/config/hooks";
-import { AuthContext } from "@/context/authContext";
-import { DataContext } from "@/context/dataContext";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,6 +8,13 @@ import Script from "next/script";
 import { useContext, useEffect, useState } from "react";
 import { FaPesoSign } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
+import { PlaceItem } from "../../../app/search/page";
+import gcash from "../../../assets/gcash.png";
+import Button from "../../../components/Button";
+import Loader from "../../../components/Loader";
+import { addBooking, fetchAllTouristSpots } from "../../../config/hooks";
+import { AuthContext } from "../../../context/authContext";
+import { DataContext } from "../../../context/dataContext";
 
 const BookingScreen = () => {
   const { id } = useParams();

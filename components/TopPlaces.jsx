@@ -1,7 +1,7 @@
-import { DataContext } from "@/context/dataContext";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { GoBookmark, GoBookmarkFill } from "react-icons/go";
+import { DataContext } from "../context/dataContext";
 import Ratings from "./Ratings";
 const TopPlaces = (props) => {
   const router = useRouter();
@@ -39,7 +39,7 @@ const PlaceItem = (props) => {
   return (
     <div
       onClick={props.onClick}
-      className={`w-full h-44 bg-white rounded-lg relative overflow-hidden
+      className={`w-full h-44  bg-white rounded-lg relative overflow-hidden
       border border-neutral-300 p-2 bg-contain bg-center bg-no-repeat
     `}
       style={{

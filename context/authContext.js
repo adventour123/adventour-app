@@ -1,8 +1,9 @@
 "use client";
-import { auth } from "@/config/firebase_config";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { createContext, useEffect, useState } from "react";
+import { account } from "../config/appwrite";
+import { auth } from "../config/firebase_config";
 
 export const AuthContext = createContext({});
 
@@ -20,6 +21,21 @@ const AuthProvider = ({ children }) => {
   }, [router, user?.accessToken, user?.uid]);
 
   useEffect(() => {
+    const getUser = async () => {
+      try {
+        const currentUser = await account.get();
+
+        console.log(currentUser);
+
+        setUser({
+          uid: currentUser?.$id,
+          accessToken: currentUser?.accessedAt,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         console.log("Sign-in provider: " + currentUser.providerId);
@@ -38,7 +54,10 @@ const AuthProvider = ({ children }) => {
     });
 
     // Cleanup function to unsubscribe from the listener when the component unmounts
-    return () => unsubscribe();
+    return () => {
+      getUser();
+      unsubscribe();
+    };
   }, []);
 
   return (

@@ -1,137 +1,53 @@
 "use client";
-import { IconSearch } from "@/components/Icons";
-import Ratings from "@/components/Ratings";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { IconSearch } from "../../components/Icons";
+import Ratings from "../../components/Ratings";
+import { fetchAllTouristSpots } from "../../config/hooks";
 
 const SearchScreen = () => {
   const [searchInput, setSearchInput] = useState("");
-
-  const [locations, setLocation] = useState([
-    {
-      id: "1",
-      name: "The Grand Hotel",
-      address: "123 Main St, New York, NY",
-      description: "A luxurious hotel with stunning views of the city skyline.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 4.5,
-      priceRange: "$$$$",
-      bookmarked: true,
-    },
-    {
-      id: "2",
-      name: "Sunset Bistro",
-      address: "45 Ocean Ave, Miami, FL",
-      description:
-        "A seaside bistro known for fresh seafood and amazing sunsets.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 4.7,
-      priceRange: "$$$",
-      bookmarked: false,
-    },
-    {
-      id: "3",
-      name: "Green Park Botanical Gardens",
-      address: "789 Park Lane, San Francisco, CA",
-      description:
-        "A beautiful botanical garden with exotic plants and peaceful walking trails.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 4.8,
-      priceRange: "$",
-      bookmarked: true,
-    },
-    {
-      id: "4",
-      name: "Mountain View Lodge",
-      address: "500 Peaks Rd, Denver, CO",
-      description:
-        "A cozy lodge offering breathtaking mountain views and ski access.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 2.5,
-      priceRange: "$$$$",
-      bookmarked: false,
-    },
-    {
-      id: "5",
-      name: "The Art Gallery Café",
-      address: "321 Culture Blvd, Chicago, IL",
-      description:
-        "A café with a curated art collection and specialty coffees.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 4.3,
-      priceRange: "$$",
-      bookmarked: false,
-    },
-    {
-      id: "6",
-      name: "Blue Lagoon Spa",
-      address: "456 Wellness Way, Orlando, FL",
-      description:
-        "A spa and wellness center with natural hot springs and luxurious treatments.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 4.9,
-      priceRange: "$$$",
-      bookmarked: true,
-    },
-    {
-      id: "7",
-      name: "City Central Museum",
-      address: "88 Heritage Ave, Boston, MA",
-      description:
-        "A museum showcasing historical artifacts and cultural exhibitions.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 4.6,
-      priceRange: "$",
-      bookmarked: true,
-    },
-    {
-      id: "8",
-      name: "Oceanfront Villas",
-      address: "22 Beach Rd, Honolulu, HI",
-      description:
-        "Villas overlooking the ocean with private access to the beach.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 4.9,
-      priceRange: "$$$$",
-      bookmarked: false,
-    },
-    {
-      id: "9",
-      name: "The Mountain Grill",
-      address: "99 Alpine Dr, Aspen, CO",
-      description:
-        "A grill restaurant famous for steaks and locally sourced ingredients.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 4.7,
-      priceRange: "$$$",
-      bookmarked: true,
-    },
-    {
-      id: "10",
-      name: "Cityscape Rooftop Lounge",
-      address: "55 Skyview St, Seattle, WA",
-      description:
-        "A rooftop lounge with panoramic views of the city and handcrafted cocktails.",
-      imgUrl: "https://wallpaperaccess.com/full/8540106.jpg",
-      ratings: 4.8,
-      priceRange: "$$$$",
-      bookmarked: false,
-    },
-  ]);
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [items, setItems] = useState([]);
+  const [originalItems, setOriginalItems] = useState([]);
 
   useEffect(() => {
-    if (!searchInput) return;
-
-    const filterData = () => {
-      const filteredData = locations.filter((item) =>
-        item.name.match(searchInput)
-      );
-      console.log(filteredData);
+    // fetch tourist spots
+    const fetchTouristSpots = async () => {
+      setIsDataLoading(true);
+      try {
+        const res = await fetchAllTouristSpots();
+        if (res.success) {
+          setItems(res.data);
+          setOriginalItems(res.data); // Store original data for filtering
+        }
+      } catch (error) {
+        console.error("Error fetching tourist spots:", error);
+      } finally {
+        setIsDataLoading(false);
+      }
     };
 
-    filterData();
-  }, [locations, searchInput]);
+    fetchTouristSpots();
+  }, []); // Only run once on mount
+
+  useEffect(() => {
+    // filter data based on search input
+    const filteringData = () => {
+      if (!searchInput) {
+        setItems(originalItems);
+        return;
+      }
+
+      const filteredData = originalItems.filter((item) =>
+        item.name.toLowerCase().includes(searchInput.toLowerCase())
+      );
+      setItems(filteredData);
+    };
+
+    filteringData();
+  }, [searchInput, originalItems]);
 
   return (
     <div className="w-full h-full overflow-y-auto bg-white p-4 relative">
@@ -161,9 +77,11 @@ const SearchScreen = () => {
 
       <div className="mt-10 py-2">
         <div className="flex flex-col space-y-2">
-          {locations.map((item) => {
-            return <PlaceItem key={item.id} {...item} />;
+          {items?.map((item) => {
+            return <PlaceItem key={item.id} data={{ ...item }} />;
           })}
+
+          {items.length === 0 && <p className="text-center">No item found</p>}
         </div>
       </div>
     </div>
