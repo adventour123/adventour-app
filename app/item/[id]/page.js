@@ -8,6 +8,7 @@ import { MdBookmarkBorder } from "react-icons/md";
 import Button from "../../../components/Button";
 import Ratings from "../../../components/Ratings";
 import Reviews from "../../../components/Reviews";
+
 const PlaceItemScreen = () => {
   const { id } = useParams();
   const router = useRouter();
