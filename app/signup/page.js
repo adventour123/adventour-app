@@ -123,7 +123,7 @@ const SignupScreen = () => {
       </Link>
 
       <div className="flex justify-center items-center">
-        <AppIcon width={200} height={200} />
+        <AppIcon width={180} height={180} />
       </div>
 
       <form>

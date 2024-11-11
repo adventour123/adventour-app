@@ -158,9 +158,7 @@ const BookingsList = ({ isLoading, error, bookings }) => {
 
   if (!bookings.length) {
     return (
-      <p className="p-4 text-center text-gray-500 mt-20">
-        No bookings found for the selected status.
-      </p>
+      <p className="p-4 text-center text-gray-500 mt-20">No bookings found.</p>
     );
   }
 

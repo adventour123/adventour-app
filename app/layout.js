@@ -6,9 +6,9 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <DataProvider>{children}</DataProvider>
-        </AuthProvider>
+        <DataProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </DataProvider>
       </body>
     </html>
   );

@@ -104,6 +104,20 @@ export const insertImgUrl = async (imgUrl, id) => {
   }
 };
 
+export const fetchUser = async (id) => {
+  try {
+    const res = await axios.get(GET_USER_API(id));
+    const data = res.data.result;
+
+    return {
+      success: res.data.success,
+      data: data
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const fetchAllUser = async () => {
   try {
     const res = await axios.get(USER_API);

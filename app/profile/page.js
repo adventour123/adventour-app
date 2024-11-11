@@ -10,7 +10,6 @@ import { TbLogout2, TbNotes } from "react-icons/tb";
 import BottomNavbar from "../../components/BottomNavbar";
 import Loader from "../../components/Loader";
 import Profile from "../../components/Profile";
-import { account } from "../../config/appwrite";
 import { auth } from "../../config/firebase_config";
 import { updateUser } from "../../config/hooks";
 import { DataContext } from "../../context/dataContext";
@@ -33,7 +32,6 @@ const ProfileScreen = () => {
 
       await updateUser(newData, data?.userId);
       await signOut(auth);
-      await account.deleteSession("current");
       router.push("/");
 
       setIsLoading(false);

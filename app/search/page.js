@@ -43,8 +43,10 @@ const SearchScreen = () => {
         return;
       }
 
-      const filteredData = originalItems.filter((item) =>
-        item.name.toLowerCase().includes(searchInput.toLowerCase())
+      const filteredData = originalItems.filter(
+        (item) =>
+          item.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+          item.address.toLowerCase().includes(searchInput.toLowerCase())
       );
       setItems(filteredData);
     };

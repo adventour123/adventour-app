@@ -1,63 +1,78 @@
 "use client";
-import { onAuthStateChanged } from "firebase/auth";
+import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { createContext, useEffect, useState } from "react";
-import { account } from "../config/appwrite";
+import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase_config";
+import { fetchUser } from "../config/hooks";
+import { DataContext } from "./dataContext";
 
 export const AuthContext = createContext({});
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const { data } = useContext(DataContext);
   const router = useRouter();
 
-  // redirect to home page
+  // Redirect to the appropriate page based on user state
   useEffect(() => {
-    if (user?.uid || user?.accessToken) {
+    if (user) {
       router.push("/home");
     } else {
       router.push("/");
     }
-  }, [router, user?.accessToken, user?.uid]);
+  }, [router, user]);
 
   useEffect(() => {
-    const getUser = async () => {
+    const unsubscribe = async () => {
       try {
-        const currentUser = await account.get();
-
-        console.log(currentUser);
-
-        setUser({
-          uid: currentUser?.$id,
-          accessToken: currentUser?.accessedAt,
-        });
+        if (data?.id) {
+          const res = await fetchUser(data?.id);
+          if (res.success) {
+            console.log("Fetch User: ", res.data);
+          }
+        }
       } catch (error) {
         console.log(error);
       }
     };
 
+    unsubscribe();
+  }, [data?.id]);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        // Handle Google and other provider-based redirects
+        const response = await getRedirectResult(auth);
+        if (response) {
+          const token = await response.user.getIdToken();
+          setUser({
+            uid: response.user.uid,
+            accessToken: token,
+          });
+        }
+      } catch (error) {
+        console.log("Error getting redirect result:", error);
+      }
+    };
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        console.log("Sign-in provider: " + currentUser.providerId);
-        console.log("  Provider-specific UID: " + currentUser.uid);
-        console.log("  Name: " + currentUser.displayName);
-        console.log("  Email: " + currentUser.email);
-        console.log("  Photo URL: " + currentUser.photoURL);
-
+        const token = await currentUser.getIdToken();
         setUser({
-          uid: currentUser?.uid,
-          accessToken: currentUser?.accessToken,
+          uid: currentUser.uid,
+          accessToken: token,
         });
       } else {
         setUser(null);
       }
     });
 
-    // Cleanup function to unsubscribe from the listener when the component unmounts
-    return () => {
-      getUser();
-      unsubscribe();
-    };
+    // Initialize by calling getUser for redirect-based auth
+    getUser();
+
+    // Cleanup the listener on unmount
+    return () => unsubscribe();
   }, []);
 
   return (
