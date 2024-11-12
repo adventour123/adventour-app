@@ -18,7 +18,7 @@ const AuthProvider = ({ children }) => {
     if (user) {
       router.push("/home");
     } else {
-      router.push("/");
+      router.push("/splash");
     }
   }, [router, user]);
 
