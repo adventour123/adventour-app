@@ -11,7 +11,6 @@ import {
   UPDATE_USER_API,
   USER_API,
 } from "./API";
-import api from "./axios";
 
 export const createAccount = async (data) => {
   try {
@@ -111,7 +110,7 @@ export const fetchUser = async (id) => {
 
     return {
       success: res.data.success,
-      data: data
+      data: data,
     };
   } catch (error) {
     console.log(error);
@@ -247,9 +246,10 @@ export const toggleBookmarking = async (id, bookmark) => {
       value: bookmark,
     };
 
-    const res = await api.put(UPDATE_TOURIST_SPOT_API(id), bookmarked);
-    const data = res.data;
+    const res = await axios.put(UPDATE_TOURIST_SPOT_API(id), bookmarked);
+    console.log("booked response: ", res);
 
+    const data = res.data;
     return {
       success: data.success,
       data: data.result,

@@ -34,6 +34,7 @@ const ShowItem = (props) => {
 
       // Update in the database
       const res = await toggleBookmarking(id, newBookmarkStatus);
+      console.log(res);
       if (res.success) {
         console.log("Item bookmark status updated successfully.");
       }
