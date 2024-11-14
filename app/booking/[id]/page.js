@@ -8,13 +8,17 @@ import Script from "next/script";
 import { useContext, useEffect, useState } from "react";
 import { FaPesoSign } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
+import card from "../../../assets/card.png";
+import gcashLogo from "../../../assets/gcash-logo.png";
 import gcash from "../../../assets/gcash.png";
 import Button from "../../../components/Button";
+import CardPaymentScreen from "../../../components/CardPayment";
 import Loader from "../../../components/Loader";
 import PlaceItem from "../../../components/PlaceItem";
 import { addBooking, fetchAllTouristSpots } from "../../../config/hooks";
 import { AuthContext } from "../../../context/authContext";
 import { DataContext } from "../../../context/dataContext";
+import PaymentSuccessfull from "../../../components/PaymentSuccessfull"
 
 const BookingScreen = () => {
   const { id } = useParams();
@@ -26,14 +30,22 @@ const BookingScreen = () => {
   const [activePaymentScreen, setActivePaymentScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+    const [packages, setPackages] = useState([])
+  const [selectedPackage, setSelectedPackage] = useState([])
+  const [paymentMethods, setPaymentMethod] = useState({
+    method: "",
+    active: false,
+  });
   const [formData, setFormData] = useState({
     fullName: data?.user?.username || "",
     age: "",
     email: data?.user?.email || "",
     contactNumber: "",
+    package: selectedPackage || "",
     startDate: "",
     endDate: "",
   });
+
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useContext(AuthContext);
@@ -50,6 +62,7 @@ const BookingScreen = () => {
           const selected = res.data.find((item) => item.id === id);
           console.log(selected);
           setSelectedItem(selected);
+          setPackages(JSON.parse(selected?.packages) || []);
         }
       } catch (error) {
         console.error("Error fetching tourist spots:", error);
@@ -84,50 +97,61 @@ const BookingScreen = () => {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+const validateForm = () => {
+  const newErrors = {};
 
-    // Full Name validation
-    if (!formData.fullName) {
-      newErrors.fullName = "Full Name is required";
-    }
+  // Full Name validation
+  if (!formData.fullName) {
+    newErrors.fullName = "Full Name is required";
+  }
 
-    // Contact Number validation
-    if (!formData.contactNumber) {
-      newErrors.contactNumber = "Contact number is required";
-    } else if (!/^\d{10,}$/.test(formData.contactNumber)) {
-      newErrors.contactNumber = "Please enter a valid contact number";
-    }
+  // Contact Number validation
+  if (!formData.contactNumber) {
+    newErrors.contactNumber = "Contact number is required";
+  } else if (!/^\d{10,}$/.test(formData.contactNumber)) {
+    newErrors.contactNumber = "Please enter a valid contact number";
+  }
 
-    // Start Date validation
-    if (!formData.startDate) {
-      newErrors.startDate = "Start date is required";
-    }
+  // Start Date validation
+  if (!formData.startDate) {
+    newErrors.startDate = "Start date is required";
+  }
 
-    // End Date validation
-    if (!formData.endDate) {
-      newErrors.endDate = "End date is required";
-    }
+  // End Date validation
+  if (!formData.endDate) {
+    newErrors.endDate = "End date is required";
+  }
 
-    // Email validation
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
+  // Email validation
+  if (!formData.email) {
+    newErrors.email = "Email is required";
+  } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    newErrors.email = "Please enter a valid email address";
+  }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  // Package validation
+  if (!selectedPackage || selectedPackage.length === 0) {
+    newErrors.package = "You must select a package";
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+
+  const handleSubmit = async (method) => {
     if (!validateForm()) return;
     setIsSubmitting(true);
 
     setTimeout(() => {
+      if (method === "card") {
+        setPaymentMethod({ method: "card", active: true });
+      }
+
+      if (method === "gcash") {
+        setPaymentMethod({ method: "gcash", active: true });
+      }
       setIsSubmitting(false);
-      setActivePaymentScreen(true);
     }, 1000);
 
     setData((prev) => ({
@@ -136,16 +160,41 @@ const BookingScreen = () => {
     }));
   };
 
+   const handlePackage = (name) => {
+  const updatedPackages = packages.map((pkg) => ({
+    ...pkg,
+    selected: pkg.name === name, // Assuming you want to track which package is selected
+  }));
+  setPackages(updatedPackages); // Update the state with the modified packages
+
+   const selectedPackage = packages.filter((pkg) => pkg.name === name);
+  setSelectedPackage(selectedPackage); // Store the full package details
+};
+
   if (isLoading) {
     return <Loader />;
   }
 
-  if (activePaymentScreen && !isSubmitting) {
+  if (isSubmitting) {
+    return <Loader />;
+  }
+
+  if (paymentMethods.active && paymentMethods.method === "gcash") {
     return (
-      <PaymentScreen
+      <GcashPaymentScreen
         data={selectedItem}
         formdata={bookingData}
-        back={() => setActivePaymentScreen(false)}
+        back={() => setPaymentMethod({ active: false })}
+      />
+    );
+  }
+
+  if (paymentMethods.active && paymentMethods.method === "card") {
+    return (
+      <CardPaymentScreen
+        data={selectedItem}
+        formdata={bookingData}
+        back={() => setPaymentMethod({ active: false })}
       />
     );
   }
@@ -279,6 +328,49 @@ const BookingScreen = () => {
           </div>
         </section>
 
+        {packages.length !== 0 && 
+<section>
+          <div className="flex items-center gap-2 mb-3">
+            <h2 className="text-sm font-bold">Select Package</h2>
+            <div className="flex-1 border-b border-neutral-300" />
+          </div>
+
+         <div className="flex flex-wrap gap-2 items-center">
+            {packages.map((item, index) => (
+              <PackageItem
+                key={index}
+                onClick={() => handlePackage(item.name)}
+                name={item.name}
+                isSelected={item.selected}
+              />
+            ))}
+          </div>
+          {errors.package && (
+            <p className="text-red-500 text-xs mt-1">{errors.package}</p>
+          )}
+
+          <div>
+            {selectedPackage?.map((item, idx) => (
+              <div className="p-2" key={idx}>
+                <h2 className="text-xs font-semibold">{item.name}</h2>
+                <ul className="text-xs  text-neutral-800">
+                  {item.tours.map((tour, i) => (
+                    <li key={i}>
+                      {tour.name ? `Tour ${tour.name} - ` : "Tour - "}
+                      {tour.destinations ? tour.destinations.join(" | ") : tour}
+                    </li>
+                  ))}
+                  <li>Transportation - {item.transportation}</li>
+                  <li>Hotel - {item.hotel}</li>
+                  <li>Price - {item.price.toLocaleString()}</li>
+                </ul>
+              </div>
+            ))}
+
+          </div>
+        </section>
+      }
+
         {/* Schedule Section */}
         <section>
           <div className="flex items-center gap-2 mb-3">
@@ -334,19 +426,66 @@ const BookingScreen = () => {
             </div>
           </div>
         </section>
+
+        <section>
+          <div className="flex items-center gap-2 mb-3">
+            <h2 className="text-sm font-bold">Select Payment Method</h2>
+            <div className="flex-1 border-b border-neutral-300" />
+          </div>
+
+          <div className="w-full flex flex-col space-y-2">
+            <div
+              onClick={() => handleSubmit("card")}
+              className="w-full p-2 border border-green-500
+            flex space-x-4 justify-center items-center rounded-md text-center bg-white shadow-sm"
+            >
+              <Image src={card} width={40} height={40} alt="Credit card" />
+
+              <p className="text-base ">Via Credit Card</p>
+            </div>
+            <div
+              onClick={() => handleSubmit("gcash")}
+              className="w-full p-2 border border-blue-500
+            flex space-x-4 justify-center items-center rounded-md text-center bg-white shadow-sm"
+            >
+              <Image src={gcashLogo} width={40} height={40} alt="Gcash" />
+              <p className="text-base ">Via Gcash Pay</p>
+            </div>
+          </div>
+        </section>
       </form>
 
       {/* Submit Button */}
-      <div className="w-full pt-4  p-4">
+      {/* <div className="w-full pt-4  p-4">
         <Button onPress={handleSubmit} className="w-full">
           {isSubmitting ? "Processing..." : "Proceed to payment"}
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 };
 
-const PaymentScreen = (props) => {
+
+const PackageItem = (props) => {
+  return (
+    <div
+      onClick={props.onClick}
+      className={`${
+        props.isSelected ? "outline-green-500" : "outline-neutral-200"
+      } w-auto p-2 px-4 bg-white outline outline-1  rounded-2xl`}
+    >
+      <p
+        className={`${
+          props.isSelected ? "text-green-500 font-semibold" : "text-neutral-500 "
+        } text-xs font-sans text-center whitespace-nowrap`}
+      >
+        {props.name}
+      </p>
+    </div>
+  );
+};
+
+const GcashPaymentScreen = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitting] = useState(false);
@@ -458,33 +597,5 @@ const PaymentScreen = (props) => {
   );
 };
 
-const PaymentSuccessfull = () => {
-  return (
-    <div className="w-full h-screen bg-white flex flex-col justify-center items-center p-6">
-      <Link href="/home" className="absolute top-5 right-5">
-        <RxCross2 size={30} />
-      </Link>
 
-      <Script
-        src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
-        type="module"
-        strategy="afterInteractive" // Ensures the script is loaded after the page is interactive
-      />
-
-      <dotlottie-player
-        src="https://lottie.host/d1e9e39a-06c7-4230-bc3a-1253a14ed858/blnFThLBw7.json"
-        background="transparent"
-        speed="1"
-        style={{ width: "200px", height: "200px" }}
-        loop
-        autoplay
-      ></dotlottie-player>
-      <p className="text-lg font-semibold">Payment Confirmed!</p>
-      <p className="text-sm text-center py-2 px-4">
-        Thank you for your payment. Your booking is now confirmed, and we’re
-        excited to have you join us!
-      </p>
-    </div>
-  );
-};
 export default BookingScreen;
