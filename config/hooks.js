@@ -172,11 +172,25 @@ export const fetchUserBookings = async () => {
   }
 };
 
-export const setNotification = async (notif) => {
+export const insertNotification = async (notif) => {
   try {
     const res = await axios.post(NOTIFICATION_API, notif);
     const data = res.data;
 
+    return {
+      success: data.success,
+      data: data.result,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchNotifications = async () => {
+  try {
+    const res = await axios.get(NOTIFICATION_API);
+    const data = res.data;
+   
     return {
       success: data.success,
       data: data.result,

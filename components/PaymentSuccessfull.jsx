@@ -3,9 +3,49 @@
 import Link from "next/link";
 import { RxCross2 } from "react-icons/rx";
 import Script from "next/script";
+import moment from "moment"
+import {useEffect, useState} from "react"
+import { insertNotification } from "../config/hooks";
 
 
-const PaymentSuccessfull = () => {
+const PaymentSuccessfull = ({amount, name, bookingId}) => {
+  const [isLoading, setIsLoading] = useState(false)
+  useEffect(() => {
+    const unsubscribe = async () => {
+      setIsLoading(true)
+      try {
+    // set to the notification
+           const notif = {
+            id: new Date().getTime().toString(),
+            subject: "Payment Transaction",
+            text: `Your payment of ₱${amount} for your booking of ${name} (Booking ID: ${bookingId}) has been successfully confirmed. We're looking forward to your stay!`,
+            datetime: moment().format("YYYY-MM-DD HH:mm:ss")
+          }
+
+          const res = await insertNotification(notif);
+
+          console.log("Payment: ", res.data)
+      setIsLoading(false)
+
+      }catch (error) {
+        console.error(error)
+      }
+     
+    }
+
+    unsubscribe()
+  }, [amount, name, bookingId])
+
+  if (isLoading) {
+    return  <div className="w-full h-screen absolute inset-0 bg-white flex flex-col justify-center items-center z-[100]">
+      <div className="py-4 loader">
+        <svg viewBox="25 25 50 50">
+          <circle r="20" cy="50" cx="50"></circle>
+        </svg>
+      </div>
+    </div>
+  }
+
   return (
     <div className="w-full h-screen bg-white flex flex-col justify-center items-center p-6">
       <Link href="/home" className="absolute top-5 right-5">

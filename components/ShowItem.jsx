@@ -124,7 +124,7 @@ const ShowItem = ({ data, close, index }) => {
           <div>
             {packages.map((item, idx) => (
               <div key={idx}>
-                <h2 className="text-sm font-semibold">{item.name}</h2>
+                <h2 className="text-sm font-semibold text-neutral-800">{item.name}</h2>
                 <ul className="text-xs p-2 text-neutral-800">
                   {item.tours.map((tour, i) => (
                     <li key={i}>

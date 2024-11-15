@@ -43,11 +43,11 @@ const CardPaymentScreen = (props) => {
   };
 
   if (isSubmitted) {
-    return <PaymentSuccessfull />;
+    return <PaymentSuccessfull amount={props.data.priceRange} name={props.travelName} bookingId={props.data.bookId} />;
   }
   return (
-    <section className="absolute inset-0 w-full h-full py-8 antialiased  md:py-16 bg-gray-900">
-      <div className="bg-gray-900 px-4 2xl:px-0">
+    <section className="absolute inset-0 w-full h-full py-8 antialiased  md:py-16 bg-white">
+      <div className="bg-white px-4 2xl:px-0">
         <div className="mx-auto max-w-5xl">
           <span onClick={props.back} className="py-4">
             <svg
@@ -56,12 +56,12 @@ const CardPaymentScreen = (props) => {
               viewBox="0 0 24 24"
               width="35"
               height="35"
-              fill="#fff"
+              fill="#000"
             >
               <path d="M19,11H9l3.29-3.29a1,1,0,0,0,0-1.42,1,1,0,0,0-1.41,0l-4.29,4.3A2,2,0,0,0,6,12H6a2,2,0,0,0,.59,1.4l4.29,4.3a1,1,0,1,0,1.41-1.42L9,13H19a1,1,0,0,0,0-2Z" />
             </svg>
           </span>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+          <h2 className="text-xl font-semibold text-black sm:text-2xl">
             Payment
           </h2>
 
@@ -71,13 +71,13 @@ const CardPaymentScreen = (props) => {
                 e.preventDefault();
                 handleSubmit();
               }}
-              className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6 lg:max-w-xl lg:p-8"
+              className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6 lg:max-w-xl lg:p-8"
             >
               <div className="mb-6 grid grid-cols-2 gap-4">
                 <div className="col-span-2 sm:col-span-1">
                   <label
                     htmlFor="full_name"
-                    className="mb-2 block text-base font-medium text-gray-900 dark:text-white"
+                    className="mb-2 block text-base font-medium text-gray-900"
                   >
                     Full name (as displayed on card)*
                   </label>
@@ -86,7 +86,7 @@ const CardPaymentScreen = (props) => {
                     id="full_name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
                     placeholder="Enter Name"
                     required
                   />
@@ -95,7 +95,7 @@ const CardPaymentScreen = (props) => {
                 <div className="col-span-2 sm:col-span-1">
                   <label
                     htmlFor="card-number-input"
-                    className="mb-2 block text-base font-medium text-gray-900 dark:text-white"
+                    className="mb-2 block text-base font-medium text-gray-900"
                   >
                     Card number*
                   </label>
@@ -104,9 +104,8 @@ const CardPaymentScreen = (props) => {
                     id="card-number-input"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
                     placeholder="xxxx-xxxx-xxxx-xxxx"
-                    pattern="^4[0-9]{12}(?:[0-9]{3})?$"
                     required
                   />
                 </div>
@@ -114,7 +113,7 @@ const CardPaymentScreen = (props) => {
                 <div>
                   <label
                     htmlFor="card-expiration-input"
-                    className="mb-2 block text-base font-medium text-gray-900 dark:text-white"
+                    className="mb-2 block text-base font-medium text-gray-900"
                   >
                     Card expiration*
                   </label>
@@ -123,7 +122,7 @@ const CardPaymentScreen = (props) => {
                     id="card-expiration-input"
                     value={expiration}
                     onChange={(e) => setExpiration(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     placeholder="12/23"
                     required
                   />
@@ -132,7 +131,7 @@ const CardPaymentScreen = (props) => {
                 <div>
                   <label
                     htmlFor="cvv-input"
-                    className="mb-2 block text-base font-medium text-gray-900 dark:text-white"
+                    className="mb-2 block text-base font-medium text-gray-900"
                   >
                     CVV*
                   </label>
@@ -141,7 +140,7 @@ const CardPaymentScreen = (props) => {
                     id="cvv-input"
                     value={cvv}
                     onChange={(e) => setCvv(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
                     placeholder="•••"
                     required
                   />
@@ -152,38 +151,38 @@ const CardPaymentScreen = (props) => {
                 type="submit"
                 className="flex w-full italic items-center justify-center rounded-lg bg-blue-500 px-5 py-2.5 text-base font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Pay now
+                {isLoading ? "Submitting..." : "Pay now"}
               </button>
             </form>
 
             <div className="mt-6 grow sm:mt-8 lg:mt-0">
-              <div className="space-y-4 rounded-lg border border-gray-100 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-800">
+              <div className="space-y-4 rounded-lg border border-gray-100 bg-gray-50 p-6">
                 <div className="space-y-2">
                   <dl className="flex items-center justify-between gap-4">
-                    <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
+                    <dt className="text-base font-normal text-gray-500 ">
                       Original price
                     </dt>
-                    <dd className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+                    <dd className="text-lg font-medium text-gray-900 flex items-center">
                       <FaPesoSign size={20} />
                       {props.data.priceRange}
                     </dd>
                   </dl>
 
                   <dl className="flex items-center justify-between gap-4">
-                    <dt className="text-base font-normal text-gray-500 dark:text-gray-400">
+                    <dt className="text-base font-normal text-gray-500 ">
                       Tax
                     </dt>
-                    <dd className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+                    <dd className="text-lg font-medium text-gray-900 flex items-center">
                       0
                     </dd>
                   </dl>
                 </div>
 
-                <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
-                  <dt className="text-base font-bold text-gray-900 dark:text-white">
+                <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
+                  <dt className="text-base font-bold text-gray-900">
                     Total
                   </dt>
-                  <dd className="text-base font-bold text-gray-900 dark:text-white flex items-center">
+                  <dd className="text-base font-bold text-gray-900 flex items-center">
                     <FaPesoSign size={20} />
                     {props.data.priceRange}
                   </dd>

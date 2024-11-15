@@ -12,16 +12,20 @@ import PopularSlides from "../../components/PopularSlides";
 import Profile from "../../components/Profile";
 import ShowItem from "../../components/ShowItem";
 import TopPlaces from "../../components/TopPlaces";
-import { fetchAllTouristSpots, fetchAllUser } from "../../config/hooks";
+import {
+  fetchAllTouristSpots,
+  fetchAllUser,
+  fetchNotifications,
+} from "../../config/hooks";
 import { AuthContext } from "../../context/authContext";
 import { DataContext } from "../../context/dataContext";
-
 const HomeScreen = () => {
   const router = useRouter();
   const { user } = useContext(AuthContext);
   const { data, setData } = useContext(DataContext);
   const [isLoading, setIsLoading] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
+  const [newNotif, setNewnotif] = useState(false);
   const [selectedItem, setSelectedItem] = useState({
     id: 1,
     active: false,
@@ -29,6 +33,94 @@ const HomeScreen = () => {
   });
   const [items, setItems] = useState([]);
   const [originalItems, setOriginalItems] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [notifiedBookings, setNotifiedBookings] = useState([]);
+
+  // useEffect(() => {
+  //   const setBookingNotif = async () => {
+  //     try {
+  //       // Fetch user bookings
+  //       const res = await fetchUserBookings();
+
+  //       // Fetch all spots
+  //       const spots = await fetchAllTouristSpots();
+
+  //       // Filter for user's bookings
+  //       const userBookings = res.data?.filter(
+  //         (item) => item.userId === user?.uid
+  //       );
+
+  //       // Retrieve notified bookings from localStorage (or state if using a global store)
+  //       const notifiedBookings = JSON.parse(localStorage.getItem('notifiedBookings')) || [];
+
+  //       // Find the first approved booking that hasn't been notified
+  //       const approvedBooking = userBookings?.find(
+  //         (item) => item.status === "approved" && !notifiedBookings.includes(item.id)
+  //       );
+
+  //       // If no approved booking or already notified, exit early
+  //       if (!approvedBooking) return;
+
+  //       // Find the corresponding spot for the approved booking
+  //       const fetchSpotItem = spots.data?.find(
+  //         (item) => item.id === approvedBooking.travelId
+  //       );
+
+  //       // If no corresponding spot found, exit early
+  //       if (!fetchSpotItem) return;
+
+  //       console.log("Spots: ", fetchSpotItem);
+
+  //       // Create the notification
+  //       const notif = {
+  //         id: new Date().getTime().toString(),
+  //         subject: "Booking Confirmation",
+  //         text: `Your booking for ${fetchSpotItem.name} has been confirmed. Thank you for traveling with us!`,
+  //         datetime: moment().format("YYYY-MM-DD HH:mm:ss"),
+  //       };
+
+  //       // Insert the notification (assuming `insertNotification` is an API call)
+  //       const notifRes = await insertNotification(notif);
+
+  //       // Add the approved booking ID to the notifiedBookings list to prevent further notifications for the same booking
+  //       notifiedBookings.push(approvedBooking.id);
+  //       localStorage.setItem('notifiedBookings', JSON.stringify(notifiedBookings)); // Store it in localStorage to persist across mounts
+
+  //     } catch (error) {
+  //       console.error("Error fetching notifications:", error);
+  //     }
+  //   };
+
+  //   // Set up polling every 30 seconds to check for approved bookings
+  //   const intervalId = setInterval(setBookingNotif, 30000); // 30 seconds interval
+
+  //   // Clean up the interval on component unmount
+  //   return () => {
+  //   setBookingNotif()
+  //     clearInterval(intervalId)
+  //   };
+
+  // }, [user]);  // Depend on `user` to trigger the check when user changes
+
+  // real time changes
+  useEffect(() => {
+    const Notifications = async () => {
+      try {
+        const res = await fetchNotifications();
+
+        if (res.data && res.data.length > 0) {
+          setNotifications(res.data);
+        } else {
+          console.error("Failed to fetch notifications");
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+
+    // Initial fetch when the component mounts
+    Notifications();
+  }); // Runs everytime
 
   // fetch user data
   useEffect(() => {
@@ -130,9 +222,11 @@ const HomeScreen = () => {
             aria-label="Notifications"
           >
             <GoBellFill size={25} color="#22c55e" />
-            <span className="flex justify-center items-center absolute top-0 right-0 bg-red-500 rounded-full text-[10px] text-white px-1">
-              1
-            </span>
+            {notifications.length !== 0 && (
+              <span className="flex justify-center items-center absolute top-0 right-0 bg-red-500 rounded-full text-[10px] text-white px-1">
+                {notifications.length}
+              </span>
+            )}
           </button>
           <Profile photoUrl={data?.user?.photoUrl} />
         </span>
@@ -154,7 +248,7 @@ const HomeScreen = () => {
 
         <section>
           <PopularSlides
-            data={items}
+            data={originalItems}
             setSelectedItem={(dt) => setSelectedItem(dt)}
           />
         </section>

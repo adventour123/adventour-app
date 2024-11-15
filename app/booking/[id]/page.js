@@ -2,23 +2,17 @@
 
 import moment from "moment";
 import Image from "next/image";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import Script from "next/script";
 import { useContext, useEffect, useState } from "react";
-import { FaPesoSign } from "react-icons/fa6";
-import { RxCross2 } from "react-icons/rx";
 import card from "../../../assets/card.png";
 import gcashLogo from "../../../assets/gcash-logo.png";
-import gcash from "../../../assets/gcash.png";
-import Button from "../../../components/Button";
 import CardPaymentScreen from "../../../components/CardPayment";
+import GcashPaymentScreen from "../../../components/GcashPayment";
 import Loader from "../../../components/Loader";
 import PlaceItem from "../../../components/PlaceItem";
-import { addBooking, fetchAllTouristSpots } from "../../../config/hooks";
+import { fetchAllTouristSpots } from "../../../config/hooks";
 import { AuthContext } from "../../../context/authContext";
 import { DataContext } from "../../../context/dataContext";
-import PaymentSuccessfull from "../../../components/PaymentSuccessfull"
 
 const BookingScreen = () => {
   const { id } = useParams();
@@ -27,11 +21,10 @@ const BookingScreen = () => {
   // States
   const { data, setData } = useContext(DataContext);
 
-  const [activePaymentScreen, setActivePaymentScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-    const [packages, setPackages] = useState([])
-  const [selectedPackage, setSelectedPackage] = useState([])
+  const [packages, setPackages] = useState([]);
+  const [selectedPackage, setSelectedPackage] = useState([]);
   const [paymentMethods, setPaymentMethod] = useState({
     method: "",
     active: false,
@@ -41,7 +34,7 @@ const BookingScreen = () => {
     age: "",
     email: data?.user?.email || "",
     contactNumber: "",
-    package: selectedPackage || "",
+    package: selectedPackage[0]?.name || "",
     startDate: "",
     endDate: "",
   });
@@ -97,47 +90,48 @@ const BookingScreen = () => {
     }
   };
 
-const validateForm = () => {
-  const newErrors = {};
+  const validateForm = () => {
+    const newErrors = {};
 
-  // Full Name validation
-  if (!formData.fullName) {
-    newErrors.fullName = "Full Name is required";
-  }
+    // Full Name validation
+    if (!formData.fullName) {
+      newErrors.fullName = "Full Name is required";
+    }
 
-  // Contact Number validation
-  if (!formData.contactNumber) {
-    newErrors.contactNumber = "Contact number is required";
-  } else if (!/^\d{10,}$/.test(formData.contactNumber)) {
-    newErrors.contactNumber = "Please enter a valid contact number";
-  }
+    // Contact Number validation
+    if (!formData.contactNumber) {
+      newErrors.contactNumber = "Contact number is required";
+    } else if (!/^\d{10,}$/.test(formData.contactNumber)) {
+      newErrors.contactNumber = "Please enter a valid contact number";
+    }
 
-  // Start Date validation
-  if (!formData.startDate) {
-    newErrors.startDate = "Start date is required";
-  }
+    // Start Date validation
+    if (!formData.startDate) {
+      newErrors.startDate = "Start date is required";
+    }
 
-  // End Date validation
-  if (!formData.endDate) {
-    newErrors.endDate = "End date is required";
-  }
+    // End Date validation
+    if (!formData.endDate) {
+      newErrors.endDate = "End date is required";
+    }
 
-  // Email validation
-  if (!formData.email) {
-    newErrors.email = "Email is required";
-  } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    newErrors.email = "Please enter a valid email address";
-  }
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
 
-  // Package validation
-  if (!selectedPackage || selectedPackage.length === 0) {
-    newErrors.package = "You must select a package";
-  }
+    // Package validation
+    if (packages.length !== 0) {
+      if (!selectedPackage || selectedPackage.length === 0) {
+        newErrors.package = "You must select a package";
+      }
+    }
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
-
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (method) => {
     if (!validateForm()) return;
@@ -160,16 +154,17 @@ const validateForm = () => {
     }));
   };
 
-   const handlePackage = (name) => {
-  const updatedPackages = packages.map((pkg) => ({
-    ...pkg,
-    selected: pkg.name === name, // Assuming you want to track which package is selected
-  }));
-  setPackages(updatedPackages); // Update the state with the modified packages
+  const handlePackage = (name) => {
+    const updatedPackages = packages.map((pkg) => ({
+      ...pkg,
+      selected: pkg.name === name, // Assuming you want to track which package is selected
+    }));
+    setPackages(updatedPackages); // Update the state with the modified packages
 
-   const selectedPackage = packages.filter((pkg) => pkg.name === name);
-  setSelectedPackage(selectedPackage); // Store the full package details
-};
+    const selectedPackage = packages.filter((pkg) => pkg.name === name);
+    console.log(selectedPackage);
+    setSelectedPackage(selectedPackage); // Store the full package details
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -184,6 +179,7 @@ const validateForm = () => {
       <GcashPaymentScreen
         data={selectedItem}
         formdata={bookingData}
+        travelName={selectedItem?.name}
         back={() => setPaymentMethod({ active: false })}
       />
     );
@@ -194,6 +190,7 @@ const validateForm = () => {
       <CardPaymentScreen
         data={selectedItem}
         formdata={bookingData}
+        travelName={selectedItem?.name}
         back={() => setPaymentMethod({ active: false })}
       />
     );
@@ -328,48 +325,49 @@ const validateForm = () => {
           </div>
         </section>
 
-        {packages.length !== 0 && 
-<section>
-          <div className="flex items-center gap-2 mb-3">
-            <h2 className="text-sm font-bold">Select Package</h2>
-            <div className="flex-1 border-b border-neutral-300" />
-          </div>
+        {packages.length !== 0 && (
+          <section>
+            <div className="flex items-center gap-2 mb-3">
+              <h2 className="text-sm font-bold">Select Package</h2>
+              <div className="flex-1 border-b border-neutral-300" />
+            </div>
 
-         <div className="flex flex-wrap gap-2 items-center">
-            {packages.map((item, index) => (
-              <PackageItem
-                key={index}
-                onClick={() => handlePackage(item.name)}
-                name={item.name}
-                isSelected={item.selected}
-              />
-            ))}
-          </div>
-          {errors.package && (
-            <p className="text-red-500 text-xs mt-1">{errors.package}</p>
-          )}
+            <div className="flex flex-wrap gap-2 items-center">
+              {packages.map((item, index) => (
+                <PackageItem
+                  key={index}
+                  onClick={() => handlePackage(item.name)}
+                  name={item.name}
+                  isSelected={item.selected}
+                />
+              ))}
+            </div>
+            {errors.package && (
+              <p className="text-red-500 text-xs mt-1">{errors.package}</p>
+            )}
 
-          <div>
-            {selectedPackage?.map((item, idx) => (
-              <div className="p-2" key={idx}>
-                <h2 className="text-xs font-semibold">{item.name}</h2>
-                <ul className="text-xs  text-neutral-800">
-                  {item.tours.map((tour, i) => (
-                    <li key={i}>
-                      {tour.name ? `Tour ${tour.name} - ` : "Tour - "}
-                      {tour.destinations ? tour.destinations.join(" | ") : tour}
-                    </li>
-                  ))}
-                  <li>Transportation - {item.transportation}</li>
-                  <li>Hotel - {item.hotel}</li>
-                  <li>Price - {item.price.toLocaleString()}</li>
-                </ul>
-              </div>
-            ))}
-
-          </div>
-        </section>
-      }
+            <div>
+              {selectedPackage?.map((item, idx) => (
+                <div className="p-2" key={idx}>
+                  <h2 className="text-xs font-semibold">{item.name}</h2>
+                  <ul className="text-xs  text-neutral-800">
+                    {item.tours.map((tour, i) => (
+                      <li key={i}>
+                        {tour.name ? `Tour ${tour.name} - ` : "Tour - "}
+                        {tour.destinations
+                          ? tour.destinations.join(" | ")
+                          : tour}
+                      </li>
+                    ))}
+                    <li>Transportation - {item.transportation}</li>
+                    <li>Hotel - {item.hotel}</li>
+                    <li>Price - {item.price.toLocaleString()}</li>
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Schedule Section */}
         <section>
@@ -465,7 +463,6 @@ const validateForm = () => {
   );
 };
 
-
 const PackageItem = (props) => {
   return (
     <div
@@ -476,7 +473,9 @@ const PackageItem = (props) => {
     >
       <p
         className={`${
-          props.isSelected ? "text-green-500 font-semibold" : "text-neutral-500 "
+          props.isSelected
+            ? "text-green-500 font-semibold"
+            : "text-neutral-500 "
         } text-xs font-sans text-center whitespace-nowrap`}
       >
         {props.name}
@@ -484,118 +483,5 @@ const PackageItem = (props) => {
     </div>
   );
 };
-
-const GcashPaymentScreen = (props) => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitting] = useState(false);
-  const { data, setData } = useContext(DataContext);
-
-  console.log(props.formdata);
-
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    try {
-      console.log(props.formdata);
-
-      const res = await addBooking(props.formdata);
-
-      if (res && res.success) {
-        setIsSubmitting(true);
-
-        // set to the notification
-        const title = "Booking";
-        const bookTitle = data?.bookItem;
-        const datetime = "";
-        // NotificationProcess;
-      }
-    } catch (error) {
-      console.error("Error submitting booking:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isSubmitted) {
-    return <PaymentSuccessfull />;
-  }
-  return (
-    <div className="w-full h-screen bg-white relative">
-      <header className="w-full flex space-x-3 justify-start items-center px-4 py-3 bg-white fixed top-0 left-0 z-50">
-        <span onClick={props.back}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            id="Outline"
-            viewBox="0 0 24 24"
-            width="30"
-            height="30"
-            fill="#16a34a"
-          >
-            <path d="M19,11H9l3.29-3.29a1,1,0,0,0,0-1.42,1,1,0,0,0-1.41,0l-4.29,4.3A2,2,0,0,0,6,12H6a2,2,0,0,0,.59,1.4l4.29,4.3a1,1,0,1,0,1.41-1.42L9,13H19a1,1,0,0,0,0-2Z" />
-          </svg>
-        </span>
-      </header>
-      <div className="pt-12 px-2">
-        <div className="w-full flex items-center justify-center p-4">
-          <Image width={150} height={150} src={gcash} alt="gcash" />
-        </div>
-
-        <div className="p-4">
-          <div className="w-full flex justify-between items-center py-1">
-            <span className="text-xs text-neutral-500 font-mono">
-              Booked Name
-            </span>
-
-            <b className="text-xs font-mono">{props.data.name}</b>
-          </div>
-          <div className="w-full flex justify-between items-center py-1">
-            <span className="text-xs text-neutral-500 font-mono">
-              Payment Method
-            </span>
-
-            <b className="text-xs font-mono">Gcash</b>
-          </div>
-
-          <div className="w-full border-b my-2"></div>
-
-          <div className="w-full flex justify-between items-center py-1">
-            <span className="text-xs text-neutral-500 font-mono">
-              Email Address
-            </span>
-
-            <b className="text-xs font-mono">{props.formdata.email}</b>
-          </div>
-          <div className="w-full flex justify-between items-center py-1">
-            <span className="text-xs text-neutral-500 font-mono">
-              Travel Date
-            </span>
-
-            <b className="text-xs font-mono">{`${props.formdata.startDate
-              .split("-")
-              .join("/")} - ${props.formdata.endDate.split("-").join("/")}`}</b>
-          </div>
-
-          <div className="w-full border-b my-2"></div>
-
-          <div className="w-full flex justify-between items-center py-1">
-            <span className="text-xs text-neutral-500 font-mono">
-              Booking Price
-            </span>
-
-            <b className="text-base font-mono flex space-x-1 items-center">
-              <FaPesoSign /> {props.formdata.bookingPrice}
-            </b>
-          </div>
-        </div>
-      </div>
-      <div className="w-full absolute bottom-2 p-4">
-        <Button onPress={handleSubmit} bgColor="bg-blue-500">
-          {isLoading ? "Processing payment..." : "Confirm Payment"}
-        </Button>
-      </div>
-    </div>
-  );
-};
-
 
 export default BookingScreen;
