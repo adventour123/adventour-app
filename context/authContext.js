@@ -18,9 +18,9 @@ const AuthProvider = ({ children }) => {
     if (user) {
       router.push("/home");
     } else {
-      router.push("/splash");
+      router.push("/");
     }
-  }, [router, user]);
+  });
 
   useEffect(() => {
     const unsubscribe = async () => {
