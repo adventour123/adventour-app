@@ -168,8 +168,8 @@ const BookingsList = ({ isLoading, error, bookings }) => {
 };
 
 const BookingItem = ({ booking }) => {
-  const { spotDetails, status } = booking;
-
+  const { spotDetails, status, datetime } = booking;
+  console.log(booking);
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case BOOKING_STATUSES.APPROVED:
@@ -196,9 +196,7 @@ const BookingItem = ({ booking }) => {
 
         <div className="flex flex-col justify-center">
           <p className="text-base text-gray-900">{spotDetails.name}</p>
-          <p className="text-xs text-gray-600">
-            {moment().fromNow(spotDetails.datetime)}
-          </p>
+          <p className="text-xs text-gray-600">{moment(datetime).fromNow()}</p>
           <p className={`text-xs ${getStatusColor(status)}`}>
             Status:{" "}
             <span className="text-xs capitalize">{status || "Pending"}</span>

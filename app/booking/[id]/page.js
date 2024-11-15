@@ -10,7 +10,10 @@ import CardPaymentScreen from "../../../components/CardPayment";
 import GcashPaymentScreen from "../../../components/GcashPayment";
 import Loader from "../../../components/Loader";
 import PlaceItem from "../../../components/PlaceItem";
-import { fetchAllTouristSpots } from "../../../config/hooks";
+import {
+  fetchAllTouristSpots,
+  insertNotification,
+} from "../../../config/hooks";
 import { AuthContext } from "../../../context/authContext";
 import { DataContext } from "../../../context/dataContext";
 
@@ -148,6 +151,16 @@ const BookingScreen = () => {
       setIsSubmitting(false);
     }, 1000);
 
+    const notif = {
+      id: new Date().getTime().toString(),
+      uid: user?.uid,
+      subject: "Booking Added",
+      text: "Your booking has been successfully added. Thank you for choosing our service!",
+      datetime: moment().format("YYYY-MM-DD HH:mm:ss"),
+    };
+
+    const res = await insertNotification(notif);
+    console.log("Booking Added: ", res.data);
     setData((prev) => ({
       ...prev,
       bookItem: selectedItem,

@@ -124,7 +124,9 @@ const ShowItem = ({ data, close, index }) => {
           <div>
             {packages.map((item, idx) => (
               <div key={idx}>
-                <h2 className="text-sm font-semibold text-neutral-800">{item.name}</h2>
+                <h2 className="text-sm font-semibold text-neutral-800">
+                  {item.name}
+                </h2>
                 <ul className="text-xs p-2 text-neutral-800">
                   {item.tours.map((tour, i) => (
                     <li key={i}>
@@ -150,18 +152,21 @@ const ShowItem = ({ data, close, index }) => {
       <BookFooter
         priceRange={data?.priceRange}
         navigate={() => router.push(`/booking/${data.id}`)}
+        hasPackage={packages.length > 0}
       />
     </div>
   );
 };
 
-const BookFooter = ({ priceRange, navigate }) => {
+const BookFooter = ({ priceRange, navigate, hasPackage }) => {
   return (
     <div className="w-full flex justify-between items-center fixed bottom-0 left-0 border-t border-neutral-100 p-3 rounded-t-3xl bg-white">
       <b className="text-2xl font-bold flex items-center">
         <FaPesoSign />
         {priceRange}
-        <p className="text-sm text-neutral-800 font-thin">/ Package</p>
+        {hasPackage && (
+          <p className="text-sm text-neutral-800 font-thin">/ Package</p>
+        )}
       </b>
 
       <div onClick={navigate} className="min-w-40">

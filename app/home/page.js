@@ -109,7 +109,10 @@ const HomeScreen = () => {
         const res = await fetchNotifications();
 
         if (res.data && res.data.length > 0) {
-          setNotifications(res.data);
+          const filteredNotif = await res.data?.filter(
+            (item) => item.uid === user?.uid
+          );
+          setNotifications(filteredNotif);
         } else {
           console.error("Failed to fetch notifications");
         }

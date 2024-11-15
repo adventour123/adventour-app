@@ -7,6 +7,7 @@ import {
   NOTIFICATION_API,
   REVIEWS_API,
   TOURIST_SPOTS_API,
+  UPDATE_ROW_USER_API,
   UPDATE_TOURIST_SPOT_API,
   UPDATE_USER_API,
   USER_API,
@@ -60,6 +61,26 @@ export const updateUser = async (newData, id) => {
       };
     }
     console.log("Updated res: ", res);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editUser = async (updatedData, id) => {
+  try {
+    // const accountRef = await doc(db, "accounts", uid);
+    // const res = await updateDoc(accountRef, newData);
+
+    const res = await axios.put(UPDATE_ROW_USER_API(id), updatedData);
+    console.log(res.data);
+
+    if (res.data?.success) {
+      return {
+        status: "success",
+        message: res.data?.result,
+      };
+    }
+    console.log("Updated profile res: ", res);
   } catch (error) {
     console.log(error);
   }
@@ -190,7 +211,7 @@ export const fetchNotifications = async () => {
   try {
     const res = await axios.get(NOTIFICATION_API);
     const data = res.data;
-   
+
     return {
       success: data.success,
       data: data.result,
