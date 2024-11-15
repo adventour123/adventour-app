@@ -20,7 +20,7 @@ const AuthProvider = ({ children }) => {
     } else {
       router.push("/");
     }
-  });
+  }, [router, user]);
 
   useEffect(() => {
     const unsubscribe = async () => {
