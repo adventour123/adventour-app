@@ -2,8 +2,7 @@
 
 import { IconProfile } from "./Icons";
 
-export const defaultProfile =
-  "https://www.seekpng.com/png/detail/41-410093_circled-user-icon-user-profile-icon-png.png";
+export const defaultProfile = require("../assets/default-profile.png");
 // Profile component using IconProfile with random default profile picture
 const Profile = ({ photoUrl, size }) => {
   const profileImg = photoUrl || defaultProfile;
