@@ -36,72 +36,6 @@ const HomeScreen = () => {
   const [notifications, setNotifications] = useState([]);
   const [notifiedBookings, setNotifiedBookings] = useState([]);
 
-  // useEffect(() => {
-  //   const setBookingNotif = async () => {
-  //     try {
-  //       // Fetch user bookings
-  //       const res = await fetchUserBookings();
-
-  //       // Fetch all spots
-  //       const spots = await fetchAllTouristSpots();
-
-  //       // Filter for user's bookings
-  //       const userBookings = res.data?.filter(
-  //         (item) => item.userId === user?.uid
-  //       );
-
-  //       // Retrieve notified bookings from localStorage (or state if using a global store)
-  //       const notifiedBookings = JSON.parse(localStorage.getItem('notifiedBookings')) || [];
-
-  //       // Find the first approved booking that hasn't been notified
-  //       const approvedBooking = userBookings?.find(
-  //         (item) => item.status === "approved" && !notifiedBookings.includes(item.id)
-  //       );
-
-  //       // If no approved booking or already notified, exit early
-  //       if (!approvedBooking) return;
-
-  //       // Find the corresponding spot for the approved booking
-  //       const fetchSpotItem = spots.data?.find(
-  //         (item) => item.id === approvedBooking.travelId
-  //       );
-
-  //       // If no corresponding spot found, exit early
-  //       if (!fetchSpotItem) return;
-
-  //       console.log("Spots: ", fetchSpotItem);
-
-  //       // Create the notification
-  //       const notif = {
-  //         id: new Date().getTime().toString(),
-  //         subject: "Booking Confirmation",
-  //         text: `Your booking for ${fetchSpotItem.name} has been confirmed. Thank you for traveling with us!`,
-  //         datetime: moment().format("YYYY-MM-DD HH:mm:ss"),
-  //       };
-
-  //       // Insert the notification (assuming `insertNotification` is an API call)
-  //       const notifRes = await insertNotification(notif);
-
-  //       // Add the approved booking ID to the notifiedBookings list to prevent further notifications for the same booking
-  //       notifiedBookings.push(approvedBooking.id);
-  //       localStorage.setItem('notifiedBookings', JSON.stringify(notifiedBookings)); // Store it in localStorage to persist across mounts
-
-  //     } catch (error) {
-  //       console.error("Error fetching notifications:", error);
-  //     }
-  //   };
-
-  //   // Set up polling every 30 seconds to check for approved bookings
-  //   const intervalId = setInterval(setBookingNotif, 30000); // 30 seconds interval
-
-  //   // Clean up the interval on component unmount
-  //   return () => {
-  //   setBookingNotif()
-  //     clearInterval(intervalId)
-  //   };
-
-  // }, [user]);  // Depend on `user` to trigger the check when user changes
-
   // real time changes
   useEffect(() => {
     const Notifications = async () => {
@@ -192,7 +126,6 @@ const HomeScreen = () => {
   }
 
   if (selectedItem.active) {
-    console.log(selectedItem.data.id);
     return (
       <ShowItem
         index={selectedItem.id}

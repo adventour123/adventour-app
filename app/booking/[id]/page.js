@@ -61,7 +61,7 @@ const BookingScreen = () => {
           setPackages(JSON.parse(selected?.packages) || []);
         }
       } catch (error) {
-        console.error("Error fetching tourist spots:", error);
+        console.log("Error fetching tourist spots:", error);
       } finally {
         setIsLoading(false);
       }

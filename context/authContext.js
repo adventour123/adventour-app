@@ -3,7 +3,6 @@ import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase_config";
-import { fetchUser } from "../config/hooks";
 import { DataContext } from "./dataContext";
 
 export const AuthContext = createContext({});
@@ -23,23 +22,6 @@ const AuthProvider = ({ children }) => {
   }, [router, user]);
 
   useEffect(() => {
-    const unsubscribe = async () => {
-      try {
-        if (data?.id) {
-          const res = await fetchUser(data?.id);
-          if (res.success) {
-            console.log("Fetch User: ", res.data);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    unsubscribe();
-  }, [data?.id]);
-
-  useEffect(() => {
     const getUser = async () => {
       try {
         // Handle Google and other provider-based redirects
@@ -56,6 +38,10 @@ const AuthProvider = ({ children }) => {
       }
     };
 
+    getUser();
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         const token = await currentUser.getIdToken();
@@ -67,9 +53,6 @@ const AuthProvider = ({ children }) => {
         setUser(null);
       }
     });
-
-    // Initialize by calling getUser for redirect-based auth
-    getUser();
 
     // Cleanup the listener on unmount
     return () => unsubscribe();

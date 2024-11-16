@@ -60,7 +60,6 @@ const SocialAuth = ({ setLoading }) => {
         }));
       }
       setIsLoading(false);
-      router.push("/home");
     } catch (error) {
       console.error("Authentication error:", error);
       setIsLoading(false);

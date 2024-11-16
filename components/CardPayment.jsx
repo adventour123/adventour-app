@@ -4,9 +4,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { FaPesoSign } from "react-icons/fa6";
-import PaymentSuccessfull from "./PaymentSuccessfull";
 import { addBooking } from "../config/hooks";
 import { DataContext } from "../context/dataContext";
+import PaymentSuccessfull from "./PaymentSuccessfull";
 
 const CardPaymentScreen = (props) => {
   const [name, setName] = useState(props.formdata.fullName || "");
@@ -43,7 +43,13 @@ const CardPaymentScreen = (props) => {
   };
 
   if (isSubmitted) {
-    return <PaymentSuccessfull amount={props.data.priceRange} name={props.travelName} bookingId={props.data.bookId} />;
+    return (
+      <PaymentSuccessfull
+        amount={props.data.priceRange}
+        name={props.travelName}
+        bookingId={props.formdata.bookId}
+      />
+    );
   }
   return (
     <section className="absolute inset-0 w-full h-full py-8 antialiased  md:py-16 bg-white">
@@ -86,7 +92,7 @@ const CardPaymentScreen = (props) => {
                     id="full_name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
                     placeholder="Enter Name"
                     required
                   />
@@ -104,7 +110,7 @@ const CardPaymentScreen = (props) => {
                     id="card-number-input"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
                     placeholder="xxxx-xxxx-xxxx-xxxx"
                     required
                   />
@@ -122,7 +128,7 @@ const CardPaymentScreen = (props) => {
                     id="card-expiration-input"
                     value={expiration}
                     onChange={(e) => setExpiration(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder:text-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 "
                     placeholder="12/23"
                     required
                   />
@@ -140,7 +146,7 @@ const CardPaymentScreen = (props) => {
                     id="cvv-input"
                     value={cvv}
                     onChange={(e) => setCvv(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-base text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
                     placeholder="•••"
                     required
                   />
@@ -179,9 +185,7 @@ const CardPaymentScreen = (props) => {
                 </div>
 
                 <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
-                  <dt className="text-base font-bold text-gray-900">
-                    Total
-                  </dt>
+                  <dt className="text-base font-bold text-gray-900">Total</dt>
                   <dd className="text-base font-bold text-gray-900 flex items-center">
                     <FaPesoSign size={20} />
                     {props.data.priceRange}
@@ -193,43 +197,23 @@ const CardPaymentScreen = (props) => {
                 <Image
                   width={30}
                   height={30}
-                  className="h-8 w-auto dark:hidden"
+                  className="h-8 w-auto"
                   src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal.svg"
                   alt=""
                 />
                 <Image
                   width={30}
                   height={30}
-                  className="hidden h-8 w-auto dark:flex"
-                  src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/paypal-dark.svg"
-                  alt=""
-                />
-                <Image
-                  width={30}
-                  height={30}
-                  className="h-8 w-auto dark:hidden"
+                  className="h-8 w-auto"
                   src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa.svg"
                   alt=""
                 />
+
                 <Image
                   width={30}
                   height={30}
-                  className="hidden h-8 w-auto dark:flex"
-                  src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/visa-dark.svg"
-                  alt=""
-                />
-                <Image
-                  width={30}
-                  height={30}
-                  className="h-8 w-auto dark:hidden"
+                  className="h-8 w-auto"
                   src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard.svg"
-                  alt=""
-                />
-                <Image
-                  width={30}
-                  height={30}
-                  className="hidden h-8 w-auto dark:flex"
-                  src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/brand-logos/mastercard-dark.svg"
                   alt=""
                 />
               </div>

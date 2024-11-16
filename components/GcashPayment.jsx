@@ -1,25 +1,15 @@
-"use client"
+"use client";
 
 import moment from "moment";
-import {insertNotification} from "../config/hooks"
 import Image from "next/image";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import Script from "next/script";
-import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
 import { FaPesoSign } from "react-icons/fa6";
-import { RxCross2 } from "react-icons/rx";
-import card from "../assets/card.png";
-import gcashLogo from "../assets/gcash-logo.png";
 import gcash from "../assets/gcash.png";
-import Button from "./Button";
-import CardPaymentScreen from "./CardPayment";
-import Loader from "./Loader";
-import PlaceItem from "./PlaceItem";
-import { addBooking, fetchAllTouristSpots } from "../config/hooks";
-import { AuthContext } from "../context/authContext";
+import { addBooking, insertNotification } from "../config/hooks";
 import { DataContext } from "../context/dataContext";
-import PaymentSuccessfull from "./PaymentSuccessfull"
+import Button from "./Button";
+import PaymentSuccessfull from "./PaymentSuccessfull";
 
 const GcashPaymentScreen = (props) => {
   const router = useRouter();
@@ -29,8 +19,10 @@ const GcashPaymentScreen = (props) => {
 
   console.log(props.formdata);
   const generateBookingNotificationText = (booking) => {
-  return `Your booking for ${booking.name} on ${moment(booking.date).format("MMMM Do, YYYY")} has been successfully added. Check your itinerary for details.`;
-};
+    return `Your booking for ${booking.name} on ${moment(booking.date).format(
+      "MMMM Do, YYYY"
+    )} has been successfully added. Check your itinerary for details.`;
+  };
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -43,15 +35,18 @@ const GcashPaymentScreen = (props) => {
         setIsSubmitting(true);
 
         // set to the notification
-            const notif = {
-            id: new Date().getTime().toString(),
-            subject: "Booked Added",
-            text: generateBookingNotificationText({name: props.data.name, date: props.formdata.datetime}),
-            datetime: moment().format("YYYY-MM-DD HH:mm:ss")
-          }
+        const notif = {
+          id: new Date().getTime().toString(),
+          subject: "Booked Added",
+          text: generateBookingNotificationText({
+            name: props.data.name,
+            date: props.formdata.datetime,
+          }),
+          datetime: moment().format("YYYY-MM-DD HH:mm:ss"),
+        };
 
-          const res = await insertNotification(notif);
-          console.log(res)
+        const res = await insertNotification(notif);
+        console.log(res);
       }
     } catch (error) {
       console.error("Error submitting booking:", error);
@@ -61,7 +56,13 @@ const GcashPaymentScreen = (props) => {
   };
 
   if (isSubmitted) {
-    return <PaymentSuccessfull amount={props.data.priceRange} name={props.travelName} bookingId={props.data.bookId} />;
+    return (
+      <PaymentSuccessfull
+        amount={props.data.priceRange}
+        name={props.travelName}
+        bookingId={props.formdata.bookId}
+      />
+    );
   }
   return (
     <div className="w-full h-screen bg-white relative">
@@ -140,6 +141,5 @@ const GcashPaymentScreen = (props) => {
     </div>
   );
 };
-
 
 export default GcashPaymentScreen;
