@@ -1,18 +1,38 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import BottomNavbar from "../../components/BottomNavbar";
 import ShowItem from "../../components/ShowItem";
 import TopPlaces from "../../components/TopPlaces";
-import { fetchAllTouristSpots } from "../../config/hooks";
+import { fetchAllTouristSpots, fetchBookmarks } from "../../config/hooks";
+import { AuthContext } from "../../context/authContext";
 
 const BookmarkScreen = () => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useContext(AuthContext);
   const [selectedItem, setSelectedItem] = useState({
     active: false,
     data: null,
   });
+  const [bookmark, setBookmark] = useState([]);
 
+  useEffect(() => {
+    const fetchIsBookmarked = async () => {
+      try {
+        const bookmarks = await fetchBookmarks();
+
+        const isBookmarked = bookmarks.data?.filter(
+          (item) => item.userId === user?.uid
+        );
+        console.log("Isbookmarked:", isBookmarked);
+        setBookmark(isBookmarked);
+      } catch (error) {
+        console.error("Error fetching bookmark:", error);
+      }
+    };
+
+    fetchIsBookmarked();
+  }, [selectedItem.data?.id, user?.uid]);
   // fetch tourist spots
   useEffect(() => {
     const fetchTouristSpots = async () => {
@@ -20,11 +40,12 @@ const BookmarkScreen = () => {
       try {
         const res = await fetchAllTouristSpots();
         if (res.success) {
-          const filterBookmarked = res.data.filter(
-            (item) => item.bookmarked === "true"
+          const bookmarkFilter = bookmark?.map((item) => item.travelId); // Extract all travelIds
+          const filterSpots = res.data.filter(
+            (item) => bookmarkFilter.includes(item.id) // Check if item.id is in the list of travelIds
           );
-
-          setItems(filterBookmarked);
+          console.log("Filtered spots: ", filterSpots);
+          setItems(filterSpots);
         }
       } catch (error) {
         console.error("Error fetching tourist spots:", error);
@@ -34,7 +55,7 @@ const BookmarkScreen = () => {
     };
 
     fetchTouristSpots();
-  }, []);
+  }, [bookmark]);
 
   if (selectedItem.active) {
     return (
@@ -51,10 +72,7 @@ const BookmarkScreen = () => {
         <b className="text-2xl text-black">Bookmarks</b>
       </header>
       <div className="py-10">
-        <TopPlaces
-          data={items}
-          setSelectedItem={(dt) => setSelectedItem({ active: true, data: dt })}
-        />
+        <TopPlaces data={items} setSelectedItem={(dt) => setSelectedItem(dt)} />
       </div>
 
       <BottomNavbar />

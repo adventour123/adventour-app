@@ -1,86 +1,128 @@
 "use client";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { FaPesoSign } from "react-icons/fa6";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoBookmark } from "react-icons/io5";
 import { MdBookmarkBorder } from "react-icons/md";
-import { toggleBookmarking } from "../config/hooks";
-import { DataContext } from "../context/dataContext";
+import {
+  fetchBookmarks,
+  insertBookmark,
+  updateBookmark,
+} from "../config/hooks";
+import { AuthContext } from "../context/authContext";
 import Button from "./Button";
 import Ratings from "./Ratings";
 import Reviews from "./Reviews";
 
-const ShowItem = ({ data, close, index }) => {
+const ShowItem = ({ data, close }) => {
   const router = useRouter();
-  const { data: contextData } = useContext(DataContext);
+  const { user } = useContext(AuthContext);
+
   const [packages, setPackages] = useState([]);
-  const [bookmark, setBookmark] = useState({
-    id: 1,
-    booked: data.bookmarked === "true",
-  });
+  const [bookmark, setBookmark] = useState(false);
+  const [bookmarkId, setBookmarkId] = useState(null);
 
-  // Set packages from props
+  // Fetch bookmark status
   useEffect(() => {
-    if (data?.packages) {
-      console.log("Raw packages data:", data.packages);
+    const fetchBookmarkStatus = async () => {
+      if (!user?.uid || !data?.id) return;
 
-      setPackages(JSON.parse(data.packages) || []);
-    }
-  }, [data]);
+      try {
+        const bookmarks = await fetchBookmarks();
+        const existingBookmark = bookmarks?.data?.find(
+          (item) => item.travelId === data.id && item.userId === user.uid
+        );
+
+        if (existingBookmark) {
+          setBookmarkId(existingBookmark.id);
+          setBookmark(existingBookmark.bookmark === "true");
+        } else {
+          setBookmarkId(null);
+          setBookmark(false);
+        }
+      } catch (error) {
+        console.error("Error fetching bookmarks:", error.message);
+      }
+    };
+
+    fetchBookmarkStatus();
+  }, [data?.id, user?.uid]);
 
   // Toggle bookmark status
-  const toggleBookmark = async () => {
+  const handleBookmarkToggle = async () => {
+    if (!user?.uid || !data?.id) return;
+
     try {
-      const newBookmarkStatus = !bookmark.booked;
-
-      // Update local bookmark state
-      setBookmark({
-        id: index,
-        booked: newBookmarkStatus,
-      });
-
-      // Update in the database
-      const res = await toggleBookmarking(
-        index,
-        newBookmarkStatus ? "true" : "false"
-      );
-
-      if (res.success) {
-        console.log("Item bookmark status updated successfully.");
+      if (bookmark) {
+        // Remove bookmark
+        if (bookmarkId) {
+          await updateBookmark(bookmarkId, {
+            column_name: "bookmark",
+            value: "false",
+          });
+          setBookmark(false);
+        }
+      } else {
+        // Add new bookmark
+        const newBookmark = {
+          id: new Date().getTime().toString(),
+          travelId: data.id,
+          userId: user.uid,
+          bookmark: "true",
+        };
+        const response = await insertBookmark(newBookmark);
+        setBookmarkId(response.data.id);
+        setBookmark(true);
       }
     } catch (error) {
-      console.error("Error toggling bookmark:", error);
+      console.error("Error toggling bookmark:", error.message);
     }
   };
+
+  // Parse packages from data
+  useEffect(() => {
+    try {
+      if (data?.packages) {
+        const parsedPackages = JSON.parse(data.packages);
+        setPackages(Array.isArray(parsedPackages) ? parsedPackages : []);
+      }
+    } catch (error) {
+      console.error("Error parsing packages:", error.message);
+    }
+  }, [data]);
 
   // Format description for truncation
   const formattedDescription =
     data?.description?.length > 200
-      ? `${data?.description.substring(0, 200)}...`
-      : data?.description;
+      ? `${data.description.substring(0, 200)}...`
+      : data.description;
 
   return (
     <div className="w-full h-full absolute inset-0 bg-white p-4">
-      <div
-        className="w-full min-h-80 rounded-3xl shadow-md p-4 overflow-hidden"
-        style={{
-          background: `url('${data.imgUrl}')`,
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-        }}
-      >
-        <div className="flex justify-between items-center">
-          <span onClick={close} className="bg-opacity-50 rounded-full p-1">
+      <div className="w-full min-h-80 relative rounded-3xl shadow-md overflow-hidden p-4">
+        <Image
+          className="absolute inset-0 w-full h-full bg-white rounded-3xl object-cover"
+          src={data.imgUrl || "/default-image.jpg"}
+          width={100}
+          height={100}
+          alt="name"
+        />
+
+        <div className="absolute left-4 right-4 flex justify-between items-center z-50">
+          <span
+            onClick={close}
+            className="bg-white/20 rounded-full p-1 shadow-xl"
+          >
             <IoIosArrowBack size={25} color="#fff" />
           </span>
 
           <span
-            className="bg-opacity-50 rounded-full p-1"
-            onClick={toggleBookmark}
+            className="bg-white/20 rounded-full p-1 shadow-xl"
+            onClick={handleBookmarkToggle}
           >
-            {bookmark.booked ? (
+            {bookmark ? (
               <IoBookmark size={25} color="#fff" />
             ) : (
               <MdBookmarkBorder size={25} color="#fff" />

@@ -2,13 +2,14 @@ import axios from "axios";
 import moment from "moment";
 import {
   BOOKING_API,
+  BOOKMARKS_API,
   CATEGORIES_API,
   GET_USER_API,
   NOTIFICATION_API,
   REVIEWS_API,
   TOURIST_SPOTS_API,
+  UPDATE_BOOKMARKS_API,
   UPDATE_ROW_USER_API,
-  UPDATE_TOURIST_SPOT_API,
   UPDATE_USER_API,
   USER_API,
 } from "./API";
@@ -274,14 +275,38 @@ export const fetchAllReviews = async () => {
   }
 };
 
-export const toggleBookmarking = async (id, bookmark) => {
+export const insertBookmark = async (bookmark) => {
   try {
-    const bookmarked = {
-      column_name: "bookmarked",
-      value: bookmark,
-    };
+    const res = await axios.post(BOOKMARKS_API, bookmark);
 
-    const res = await axios.put(UPDATE_TOURIST_SPOT_API(id), bookmarked);
+    const data = res.data;
+    return {
+      success: data.success,
+      data: data.result,
+      id: data.row,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateBookmark = async (id, bookmark) => {
+  try {
+    const res = await axios.put(UPDATE_BOOKMARKS_API(id), bookmark);
+
+    const data = res.data;
+    return {
+      success: data.success,
+      data: data.result,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const fetchBookmarks = async () => {
+  try {
+    const res = await axios.get(BOOKMARKS_API);
 
     const data = res.data;
     return {

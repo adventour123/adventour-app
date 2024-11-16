@@ -12,6 +12,12 @@ export const USER_API =
   "https://api.fruitask.com/v3/tables/jOa8w743BhrS0qI/rows/?api_key=02f69d5cf6e98212a8933e7af958e129";
 export const PAYMENT_API =
   "https://api.fruitask.com/v3/tables/DMCKmGjVG6evdCz/rows/?api_key=02f69d5cf6e98212a8933e7af958e129";
+export const BOOKMARKS_API =
+  "https://api.fruitask.com/v3/tables/t3MgWbcmGgTMWNI/rows/?api_key=02f69d5cf6e98212a8933e7af958e129";
+
+export const UPDATE_BOOKMARKS_API = (id) => {
+  return `https://api.fruitask.com/v3/tables/t3MgWbcmGgTMWNI/rows/${id}?api_key=02f69d5cf6e98212a8933e7af958e129`;
+};
 
 export const GET_TOURIST_SPOT_API = (id) => {
   return `https://api.fruitask.com/v3/tables/iWvImu3KdJD55vp/rows/${id}/?api_key=02f69d5cf6e98212a8933e7af958e129`;
